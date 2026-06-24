@@ -1,0 +1,159 @@
+@import "tailwindcss";
+
+/* ---- Design tokens -------------------------------------------------------
+   Elegant, TV-safe (high contrast, large type, overscan-safe margins).
+   Fonts load from Google Fonts when online; strong fallbacks keep it
+   looking good fully offline (Tahoma renders Persian on Windows).         */
+@theme {
+  --font-serif: "Cormorant Garamond", "Georgia", serif;
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-fa: "Vazirmatn", "Tahoma", "Segoe UI", sans-serif;
+
+  --color-ink: #f4ede1;
+  --color-ink-dim: #b9ad97;
+  --color-gold: #cda85f;
+  --color-gold-soft: #e6cf9a;
+  --color-night: #0c0a09;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: #0a0a0a;
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Persian text: right-to-left + Persian font */
+.fa {
+  font-family: var(--font-fa);
+  direction: rtl;
+}
+
+/* Slow ambient drift used by the TV background */
+@keyframes drift {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(2%, -2%, 0) scale(1.08); }
+  100% { transform: translate3d(0, 0, 0) scale(1); }
+}
+
+/* TV overscan-safe padding: many TVs crop ~3-5% of the edges */
+.safe {
+  padding: clamp(2.5vh, 4vh, 6vh) clamp(2.5vw, 4vw, 6vw);
+}
+
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
+
+button:not(:disabled),
+[role="button"] { cursor: pointer; }
+
+/* ---- animated-fill -------------------------------------------------------
+   The hover effect from the invitation admin panel: a soft disc grows from the
+   cursor to gently flood the element. Position + scale are set per-pointer by
+   useAnimatedFill(); colour is themed per element via the CSS vars below.    */
+.animated-fill {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.animated-fill::after {
+  content: "";
+  position: absolute;
+  top: var(--fill-y, 50%);
+  left: var(--fill-x, 50%);
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  background: rgb(var(--fill-base, 245 245 245));
+  box-shadow: 0 0 30px rgb(var(--fill-glow, 255 255 255) / var(--fill-glow-alpha, 0.14));
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+  transition:
+    transform 0.85s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+  /* Behind the label (which is often a bare text node, not an element child)
+     so the flood never hides the text. `isolation: isolate` keeps -1 contained
+     to the button rather than slipping behind the page. */
+  z-index: -1;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+.animated-fill:hover::after,
+.animated-fill:focus-visible::after {
+  transform: translate(-50%, -50%) scale(var(--fill-scale, 22));
+  opacity: 1;
+}
+
+/* No fill on disabled buttons */
+.animated-fill:disabled::after {
+  opacity: 0 !important;
+  transform: translate(-50%, -50%) scale(0) !important;
+}
+
+.animated-fill > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Colour variant: destructive (red flood, light text) */
+.fill-danger { --fill-base: 220 38 38; --fill-glow: 248 113 113; --fill-glow-alpha: 0.32; }
+
+textarea:focus {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14);
+}
+
+/* ---- Character roll ("horizontal spiral") --------------------------------
+   Each glyph flips up with a staggered delay so the word travels like a wave.
+   Used (looping) on the announcement banner only.                          */
+.roll-text {
+  display: inline-flex;
+  align-items: baseline;
+  white-space: pre;
+}
+
+.roll-char {
+  display: inline-block;
+  height: 1.08em;
+  line-height: 1.08em;
+  overflow: hidden;
+  perspective: 90px;
+}
+
+.roll-char > span {
+  display: block;
+  transform-origin: 50% 50%;
+  will-change: transform;
+}
+
+.roll-loop .roll-char > span {
+  animation: roll-flip 3s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  animation-delay: calc(var(--roll-index) * 55ms);
+}
+
+@keyframes roll-flip {
+  0%, 34%, 100% { transform: translateY(0) rotateX(0deg); }
+  50%, 70% { transform: translateY(-100%) rotateX(28deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animated-fill::after { transition: none !important; }
+  .roll-loop .roll-char > span { animation: none !important; }
+}

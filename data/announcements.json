@@ -1,0 +1,114 @@
+{
+  "announcements": [
+    {
+      "id": "welcome",
+      "label": "Welcome",
+      "chime": true,
+      "text": {
+        "en": "Assalamu alaikum, and welcome. Please find your seats — the celebration will begin shortly.",
+        "fa": "السلام علیکم و خوش آمدید. لطفاً سر جای خود بنشینید — مراسم به‌زودی آغاز می‌شود."
+      },
+      "audio": { "en": "/audio/welcome-en.mp3", "fa": "/audio/welcome-fa.mp3" }
+    },
+    {
+      "id": "quran",
+      "label": "Qur’an recitation",
+      "chime": true,
+      "text": {
+        "en": "We will now begin with a recitation from the Holy Qur’an. Kindly take your seats and observe silence.",
+        "fa": "اکنون مراسم با تلاوت قرآن کریم آغاز می‌شود. لطفاً بنشینید و سکوت را رعایت کنید."
+      },
+      "audio": { "en": "/audio/quran-en.mp3", "fa": "/audio/quran-fa.mp3" }
+    },
+    {
+      "id": "entrance",
+      "label": "Couple’s entrance",
+      "chime": true,
+      "text": {
+        "en": "Please rise and welcome the bride and groom!",
+        "fa": "لطفاً بایستید و به عروس و داماد خوش‌آمد بگویید!"
+      },
+      "audio": { "en": "/audio/entrance-en.mp3", "fa": "/audio/entrance-fa.mp3" }
+    },
+    {
+      "id": "green-shaal",
+      "label": "Green Shaal ceremony",
+      "chime": true,
+      "text": {
+        "en": "We now invite you to join the Green Shaal ceremony for the bride and groom.",
+        "fa": "اکنون شما را به مراسم شال سبز برای عروس و داماد دعوت می‌کنیم."
+      },
+      "audio": { "en": "/audio/green-shaal-en.mp3", "fa": "/audio/green-shaal-fa.mp3" }
+    },
+    {
+      "id": "dinner",
+      "label": "Dinner is served",
+      "chime": true,
+      "text": {
+        "en": "Dinner is now served. Please make your way to the buffet and enjoy your meal.",
+        "fa": "شام آماده است. لطفاً به سمت میز پذیرایی بروید و از غذای خود لذت ببرید."
+      },
+      "audio": { "en": "/audio/dinner-en.mp3", "fa": "/audio/dinner-fa.mp3" }
+    },
+    {
+      "id": "adhan",
+      "label": "Adhan / prayer prep",
+      "chime": true,
+      "text": {
+        "en": "The Adhan will be called shortly. Please prepare for prayer.",
+        "fa": "به‌زودی اذان گفته می‌شود. لطفاً برای نماز آماده شوید."
+      },
+      "audio": { "en": "/audio/adhan-en.mp3", "fa": "/audio/adhan-fa.mp3" }
+    },
+    {
+      "id": "prayer",
+      "label": "Congregational prayer",
+      "chime": true,
+      "text": {
+        "en": "We will now pause for the congregational prayer. We will resume at 9:40.",
+        "fa": "اکنون برای نماز جماعت توقف می‌کنیم. مراسم ساعت ۹:۴۰ ادامه می‌یابد."
+      },
+      "audio": { "en": "/audio/prayer-en.mp3", "fa": "/audio/prayer-fa.mp3" }
+    },
+    {
+      "id": "return",
+      "label": "Grand return",
+      "chime": true,
+      "text": {
+        "en": "Please welcome back the bride and groom as we continue the celebration!",
+        "fa": "لطفاً بار دیگر به عروس و داماد خوش‌آمد بگویید تا جشن را ادامه دهیم!"
+      },
+      "audio": { "en": "/audio/return-en.mp3", "fa": "/audio/return-fa.mp3" }
+    },
+    {
+      "id": "jewelry-cake",
+      "label": "Jewelry & cake cutting",
+      "chime": true,
+      "text": {
+        "en": "We now invite the family for the jewelry presentation, followed by the cake cutting. Please gather around.",
+        "fa": "اکنون از خانواده برای اهدای جواهرات و سپس بریدن کیک دعوت می‌کنیم. لطفاً گرد هم جمع شوید."
+      },
+      "audio": { "en": "/audio/jewelry-cake-en.mp3", "fa": "/audio/jewelry-cake-fa.mp3" }
+    },
+    {
+      "id": "photos",
+      "label": "Family photos",
+      "chime": true,
+      "text": {
+        "en": "We now invite all family members for family photographs with the bride and groom.",
+        "fa": "اکنون از همه اعضای خانواده برای عکس خانوادگی با عروس و داماد دعوت می‌کنیم."
+      },
+      "audio": { "en": "/audio/photos-en.mp3", "fa": "/audio/photos-fa.mp3" }
+    },
+    {
+      "id": "farewell",
+      "label": "Farewell",
+      "chime": true,
+      "text": {
+        "en": "Thank you for joining us this evening. Please join us in wishing the newlyweds a blessed life together. Safe travels home.",
+        "fa": "از اینکه امشب در کنار ما بودید سپاسگزاریم. برای زوج جوان آرزوی زندگی پربرکت داریم. سفر به‌خیر."
+      },
+      "audio": { "en": "/audio/farewell-en.mp3", "fa": "/audio/farewell-fa.mp3" }
+    }
+  ]
+}

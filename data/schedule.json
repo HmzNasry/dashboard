@@ -1,0 +1,116 @@
+{
+  "date": "Walima Celebration",
+  "events": [
+    {
+      "id": "arrival",
+      "time": "18:00",
+      "title": { "en": "Guest Arrival", "fa": "ورود مهمانان" },
+      "subtitle": {
+        "en": "Greet family and friends, and find your seats",
+        "fa": "با خانواده و دوستان احوال‌پرسی کنید و سر جای خود بنشینید"
+      }
+    },
+    {
+      "id": "quran",
+      "time": "18:45",
+      "title": {
+        "en": "Qur’an Recitation & Opening Du’a",
+        "fa": "تلاوت قرآن و دعای آغازین"
+      },
+      "subtitle": {
+        "en": "A recitation followed by a du’a for the newlyweds",
+        "fa": "تلاوت قرآن و سپس دعایی برای زوج جوان"
+      }
+    },
+    {
+      "id": "entrance",
+      "time": "19:00",
+      "title": { "en": "Bride & Groom Entrance", "fa": "ورود عروس و داماد" },
+      "subtitle": {
+        "en": "Welcomed by family and guests",
+        "fa": "با استقبال خانواده و مهمانان"
+      }
+    },
+    {
+      "id": "green-shaal",
+      "time": "19:30",
+      "title": { "en": "Green Shaal Ceremony", "fa": "مراسم شال سبز" },
+      "subtitle": {
+        "en": "A special family tradition honoring the couple",
+        "fa": "سنتی خانوادگی و ویژه برای گرامیداشت عروس و داماد"
+      }
+    },
+    {
+      "id": "dinner",
+      "time": "20:00",
+      "title": { "en": "Dinner Service", "fa": "صرف شام" },
+      "subtitle": {
+        "en": "Enjoy dinner and fellowship with family and friends",
+        "fa": "از شام و همنشینی با خانواده و دوستان لذت ببرید"
+      }
+    },
+    {
+      "id": "adhan",
+      "time": "21:15",
+      "title": {
+        "en": "Adhan & Prayer Preparation",
+        "fa": "اذان و آماده‌سازی برای نماز"
+      },
+      "subtitle": {
+        "en": "The Adhan will be called — please prepare for prayer",
+        "fa": "اذان گفته می‌شود — لطفاً برای نماز آماده شوید"
+      }
+    },
+    {
+      "id": "prayer",
+      "time": "21:16",
+      "title": { "en": "Congregational Prayer", "fa": "نماز جماعت" },
+      "subtitle": {
+        "en": "Prayer break for guests · until 9:40 PM",
+        "fa": "زمان نماز برای مهمانان · تا ساعت ۹:۴۰"
+      }
+    },
+    {
+      "id": "return",
+      "time": "21:40",
+      "title": {
+        "en": "Bride & Groom Grand Return",
+        "fa": "بازگشت باشکوه عروس و داماد"
+      },
+      "subtitle": {
+        "en": "The couple return for the evening celebration",
+        "fa": "عروس و داماد برای ادامه جشن بازمی‌گردند"
+      }
+    },
+    {
+      "id": "jewelry-cake",
+      "time": "21:45",
+      "title": {
+        "en": "Jewelry Presentation & Cake Cutting",
+        "fa": "اهدای جواهرات و بریدن کیک"
+      },
+      "subtitle": {
+        "en": "Gifts and blessings, then the cake-cutting ceremony",
+        "fa": "تقدیم هدایا و دعای خیر، سپس مراسم بریدن کیک"
+      }
+    },
+    {
+      "id": "photos",
+      "time": "22:30",
+      "title": { "en": "Family Photos", "fa": "عکس خانوادگی" },
+      "subtitle": {
+        "en": "Family and group photographs with the couple",
+        "fa": "عکس‌های خانوادگی و گروهی با عروس و داماد"
+      }
+    },
+    {
+      "id": "farewell",
+      "time": "23:00",
+      "title": { "en": "Farewell & Closing", "fa": "بدرقه و پایان مراسم" },
+      "subtitle": {
+        "en": "The celebration concludes — farewell to the newlyweds",
+        "fa": "جشن به پایان می‌رسد — بدرقه زوج جوان"
+      }
+    }
+  ]
+}

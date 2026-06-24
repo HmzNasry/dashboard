@@ -1,0 +1,8 @@
+{
+  "_comment": "Points the offline TTS at your Piper install. piperPath can be 'piper' (on PATH) or an absolute path to the binary/exe. Voice models are .onnx files (each needs its matching .onnx.json beside it). Download from https://github.com/rhasspy/piper/blob/master/VOICES.md",
+  "piperPath": "piper",
+  "voices": {
+    "en": "voices/en_US-amy-medium.onnx",
+    "fa": "voices/fa_IR-amir-medium.onnx"
+  }
+}
