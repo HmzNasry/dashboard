@@ -31,6 +31,23 @@ npm run preview        # builds, then serves everything on http://localhost:3001
 # Display → http://localhost:3001/   ·   Control → http://localhost:3001/control
 ```
 
+## Setting up on another laptop
+
+A fresh clone is self-contained — the schedule, announcements, and the TTS
+**voices** are committed. On the other laptop (Mac or Windows):
+
+```bash
+npm install
+npm run preview        # builds + starts on http://localhost:3001
+```
+
+On first start, `scripts/setup-tts.mjs` runs automatically and installs the
+Piper engine for that OS (Windows: a self-contained binary; macOS/Linux: a
+`.venv-piper` virtualenv via pip — macOS needs Python 3.10+). The voices are
+already present, so no download is needed for them. After that it's fully
+offline. (`node_modules`, `dist`, the Piper engine, and runtime files are
+regenerated automatically and aren't in git.)
+
 ---
 
 ## Adding events & announcements (no code)

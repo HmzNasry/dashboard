@@ -1,8 +1,10 @@
 node_modules
 dist
 media/generated
-voices
 .venv-piper
 devices.json
 *.log
 .DS_Store
+
+# Voices ARE committed (so a fresh clone works offline). The Piper engine
+# (.venv-piper / piper binary) is recreated by scripts/setup-tts.mjs on start.
