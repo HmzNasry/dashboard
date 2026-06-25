@@ -116,6 +116,25 @@ announcement appears full-screen on the TVs without audio.
    soft chime). Do this during setup, before guests arrive.
 5. On the laptop screen, open the **Control** URL in another window. You're live.
 
+### Control from your phone (optional)
+
+The control panel can run on a phone as a wireless remote — the laptop still
+drives the TV and plays the sound. No internet needed, just a shared local
+network:
+
+1. Put the phone and laptop on the **same network** — a phone hotspot the laptop
+   joins, or the laptop's Mobile Hotspot the phone joins. (Local only; internet
+   is not required.)
+2. When the server starts it prints a **phone URL** like
+   `http://192.168.x.x:3001/control`. Open it on the phone, or scan the **QR
+   code** in the control panel's **Devices** section on the laptop.
+3. The phone shows "Waiting for approval." On the **laptop** control panel, find
+   it under **Devices** and tap **Approve** (rename/remove available too).
+   Approved phones are remembered next time.
+
+The laptop (localhost) is always the trusted admin; phones must be approved
+before they can drive the screen.
+
 ### Reliability checklist
 - Test the whole flow at home first, including the chime through the TV/PA.
 - Disable Windows sleep, screen saver, and notifications.
@@ -129,7 +148,10 @@ announcement appears full-screen on the TVs without audio.
 
 - **Front end:** Vite + React + TypeScript + Tailwind v4, Framer Motion for the
   smooth animations. `src/views/Display.tsx` and `src/views/Control.tsx`.
-- **Bus:** `BroadcastChannel` (`src/lib/bus.ts`) syncs control → display.
+- **Bus:** a WebSocket relay through the server (`src/lib/net.ts`) carries
+  messages control → server → display, so the control panel can run on another
+  device. The server tracks connected devices and gates remote phones behind an
+  approval (admin = the laptop itself / loopback).
 - **Chime:** synthesized with the Web Audio API (`src/lib/chime.ts`) — no
   copyrighted sound file shipped.
 - **Server:** Express (`server/index.js`) serves content from `data/`, the

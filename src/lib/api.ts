@@ -1,4 +1,9 @@
-import type { AppData, ScheduleData, AnnouncementsData } from "../types";
+import type {
+  AppData,
+  ScheduleData,
+  AnnouncementsData,
+  Announcement,
+} from "../types";
 
 // All content is fetched from the Node server so editing the JSON in /data and
 // refreshing is enough — no rebuild needed to add events or reminders.
@@ -11,6 +16,26 @@ export async function fetchData(): Promise<AppData> {
   ]);
   return { schedule: sched, announcements: ann.announcements };
 }
+
+async function postJson(url: string, body: unknown): Promise<void> {
+  const r = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  if (!r.ok) {
+    const msg = await r.json().catch(() => ({}));
+    throw new Error(msg.error || `HTTP ${r.status}`);
+  }
+}
+
+/** Persist the schedule (writes data/schedule.json on the server). */
+export const saveSchedule = (schedule: ScheduleData) =>
+  postJson("/api/schedule", schedule);
+
+/** Persist the announcement library (writes data/announcements.json). */
+export const saveAnnouncements = (announcements: Announcement[]) =>
+  postJson("/api/announcements", { announcements });
 
 export interface TtsResult {
   ok: boolean;

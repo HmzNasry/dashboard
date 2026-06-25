@@ -5,108 +5,128 @@
       "label": "Welcome",
       "chime": true,
       "text": {
-        "en": "Assalamu alaikum, and welcome. Please find your seats — the celebration will begin shortly.",
-        "fa": "السلام علیکم و خوش آمدید. لطفاً سر جای خود بنشینید — مراسم به‌زودی آغاز می‌شود."
+        "en": "Ladies and gentlemen, welcome. We are truly honored by your presence and thank you for celebrating with us.",
+        "fa": "خانم‌ها و آقایان، خوش آمدید. تشریف‌آوری شما مایهٔ افتخار ماست و صمیمانه سپاسگزاریم."
       },
       "audio": { "en": "/audio/welcome-en.mp3", "fa": "/audio/welcome-fa.mp3" }
     },
     {
+      "id": "couple-entrance",
+      "label": "Arrival of Bride & Groom",
+      "chime": true,
+      "text": {
+        "en": "Please join us in welcoming the newlyweds.",
+        "fa": "از مهمانان گرامی تقاضا می‌شود برای استقبال از عروس و داماد آماده باشند."
+      },
+      "audio": { "en": "/audio/couple-entrance-en.mp3", "fa": "/audio/couple-entrance-fa.mp3" }
+    },
+    {
       "id": "quran",
-      "label": "Qur’an recitation",
+      "label": "Qur’an Recitation",
       "chime": true,
       "text": {
         "en": "We will now begin with a recitation from the Holy Qur’an. Kindly take your seats and observe silence.",
-        "fa": "اکنون مراسم با تلاوت قرآن کریم آغاز می‌شود. لطفاً بنشینید و سکوت را رعایت کنید."
+        "fa": "اکنون مراسم با تلاوت آیاتی از کلام‌الله مجید آغاز می‌شود. لطفاً بنشینید و سکوت را رعایت فرمایید."
       },
       "audio": { "en": "/audio/quran-en.mp3", "fa": "/audio/quran-fa.mp3" }
     },
     {
-      "id": "entrance",
-      "label": "Couple’s entrance",
+      "id": "cake",
+      "label": "Cake Cutting",
       "chime": true,
       "text": {
-        "en": "Please rise and welcome the bride and groom!",
-        "fa": "لطفاً بایستید و به عروس و داماد خوش‌آمد بگویید!"
+        "en": "Please gather around for the cake cutting and keepsake photographs.",
+        "fa": "لطفاً برای مراسم بریدن کیک و گرفتن عکس‌های یادگاری گرد هم تشریف بیاورید."
       },
-      "audio": { "en": "/audio/entrance-en.mp3", "fa": "/audio/entrance-fa.mp3" }
+      "audio": { "en": "/audio/cake-en.mp3", "fa": "/audio/cake-fa.mp3" }
     },
     {
-      "id": "green-shaal",
-      "label": "Green Shaal ceremony",
+      "id": "prayer",
+      "label": "Prayer",
       "chime": true,
       "text": {
-        "en": "We now invite you to join the Green Shaal ceremony for the bride and groom.",
-        "fa": "اکنون شما را به مراسم شال سبز برای عروس و داماد دعوت می‌کنیم."
+        "en": "Guests are kindly invited to proceed for prayer.",
+        "fa": "از مهمانان گرامی دعوت می‌شود برای ادای نماز تشریف ببرند."
       },
-      "audio": { "en": "/audio/green-shaal-en.mp3", "fa": "/audio/green-shaal-fa.mp3" }
+      "audio": { "en": "/audio/prayer-en.mp3", "fa": "/audio/prayer-fa.mp3" }
     },
     {
       "id": "dinner",
       "label": "Dinner is served",
       "chime": true,
       "text": {
-        "en": "Dinner is now served. Please make your way to the buffet and enjoy your meal.",
-        "fa": "شام آماده است. لطفاً به سمت میز پذیرایی بروید و از غذای خود لذت ببرید."
+        "en": "Dinner is now served. Please enjoy your meal.",
+        "fa": "شام آماده است. نوش جان؛ از صرف غذا لذت ببرید."
       },
       "audio": { "en": "/audio/dinner-en.mp3", "fa": "/audio/dinner-fa.mp3" }
     },
     {
-      "id": "adhan",
-      "label": "Adhan / prayer prep",
+      "id": "photos-intro",
+      "label": "Photos — invite to stage",
       "chime": true,
       "text": {
-        "en": "The Adhan will be called shortly. Please prepare for prayer.",
-        "fa": "به‌زودی اذان گفته می‌شود. لطفاً برای نماز آماده شوید."
+        "en": "We now begin the family photo session. To ensure everyone has a chance for photos with the bride and groom, we kindly invite guests to the stage in order.",
+        "fa": "اکنون برنامهٔ گرفتن عکس‌های یادگاری آغاز می‌شود. جهت نظم بهتر، از مهمانان گرامی تقاضا می‌شود به ترتیب برای عکس با عروس و داماد به جایگاه تشریف بیاورند."
       },
-      "audio": { "en": "/audio/adhan-en.mp3", "fa": "/audio/adhan-fa.mp3" }
+      "audio": { "en": "/audio/photos-intro-en.mp3", "fa": "/audio/photos-intro-fa.mp3" }
     },
     {
-      "id": "prayer",
-      "label": "Congregational prayer",
+      "id": "photos-bride-family",
+      "label": "Photos — Bride’s family",
       "chime": true,
       "text": {
-        "en": "We will now pause for the congregational prayer. We will resume at 9:40.",
-        "fa": "اکنون برای نماز جماعت توقف می‌کنیم. مراسم ساعت ۹:۴۰ ادامه می‌یابد."
+        "en": "We kindly invite the immediate family of the bride to the stage for photographs.",
+        "fa": "از والدین، خواهران، برادران و اقارب نزدیک عروس دعوت می‌شود برای عکس به جایگاه تشریف بیاورند."
       },
-      "audio": { "en": "/audio/prayer-en.mp3", "fa": "/audio/prayer-fa.mp3" }
+      "audio": { "en": "/audio/photos-bride-family-en.mp3", "fa": "/audio/photos-bride-family-fa.mp3" }
     },
     {
-      "id": "return",
-      "label": "Grand return",
+      "id": "photos-groom-family",
+      "label": "Photos — Groom’s family",
       "chime": true,
       "text": {
-        "en": "Please welcome back the bride and groom as we continue the celebration!",
-        "fa": "لطفاً بار دیگر به عروس و داماد خوش‌آمد بگویید تا جشن را ادامه دهیم!"
+        "en": "We kindly invite the immediate family of the groom to the stage for photographs.",
+        "fa": "از والدین، خواهران، برادران و اقارب نزدیک داماد دعوت می‌شود برای عکس به جایگاه تشریف بیاورند."
       },
-      "audio": { "en": "/audio/return-en.mp3", "fa": "/audio/return-fa.mp3" }
+      "audio": { "en": "/audio/photos-groom-family-en.mp3", "fa": "/audio/photos-groom-family-fa.mp3" }
     },
     {
-      "id": "jewelry-cake",
-      "label": "Jewelry & cake cutting",
+      "id": "photos-bride-friends",
+      "label": "Photos — Bride’s friends",
       "chime": true,
       "text": {
-        "en": "We now invite the family for the jewelry presentation, followed by the cake cutting. Please gather around.",
-        "fa": "اکنون از خانواده برای اهدای جواهرات و سپس بریدن کیک دعوت می‌کنیم. لطفاً گرد هم جمع شوید."
+        "en": "We now invite the friends of the bride to the stage for photographs.",
+        "fa": "از دوستان عروس دعوت می‌شود برای عکس به جایگاه تشریف بیاورند."
       },
-      "audio": { "en": "/audio/jewelry-cake-en.mp3", "fa": "/audio/jewelry-cake-fa.mp3" }
+      "audio": { "en": "/audio/photos-bride-friends-en.mp3", "fa": "/audio/photos-bride-friends-fa.mp3" }
     },
     {
-      "id": "photos",
-      "label": "Family photos",
+      "id": "photos-groom-friends",
+      "label": "Photos — Groom’s friends",
       "chime": true,
       "text": {
-        "en": "We now invite all family members for family photographs with the bride and groom.",
-        "fa": "اکنون از همه اعضای خانواده برای عکس خانوادگی با عروس و داماد دعوت می‌کنیم."
+        "en": "We now invite the friends of the groom to the stage for photographs.",
+        "fa": "از دوستان داماد دعوت می‌شود برای عکس به جایگاه تشریف بیاورند."
       },
-      "audio": { "en": "/audio/photos-en.mp3", "fa": "/audio/photos-fa.mp3" }
+      "audio": { "en": "/audio/photos-groom-friends-en.mp3", "fa": "/audio/photos-groom-friends-fa.mp3" }
+    },
+    {
+      "id": "photos-all",
+      "label": "Photos — All guests",
+      "chime": true,
+      "text": {
+        "en": "We now warmly invite all remaining guests to the stage for photographs. Thank you for your cooperation.",
+        "fa": "اکنون از همهٔ مهمانان گرامی دعوت می‌شود برای عکس به جایگاه تشریف بیاورند. از همکاری و حوصلهٔ شما سپاسگزاریم."
+      },
+      "audio": { "en": "/audio/photos-all-en.mp3", "fa": "/audio/photos-all-fa.mp3" }
     },
     {
       "id": "farewell",
       "label": "Farewell",
       "chime": true,
       "text": {
-        "en": "Thank you for joining us this evening. Please join us in wishing the newlyweds a blessed life together. Safe travels home.",
-        "fa": "از اینکه امشب در کنار ما بودید سپاسگزاریم. برای زوج جوان آرزوی زندگی پربرکت داریم. سفر به‌خیر."
+        "en": "Thank you for honoring us with your presence and heartfelt prayers. May Allah bless you and your families with health, happiness and endless blessings.",
+        "fa": "از حضور، محبت و دعاهای خیر شما صمیمانه سپاسگزاریم. خداوند متعال به شما و خانواده‌های محترم‌تان صحت، سعادت و برکت روزافزون عنایت فرماید."
       },
       "audio": { "en": "/audio/farewell-en.mp3", "fa": "/audio/farewell-fa.mp3" }
     }

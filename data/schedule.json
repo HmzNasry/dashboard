@@ -1,115 +1,103 @@
 {
-  "date": "Walima Celebration",
+  "date": "Abid & Zohra Wedding",
   "events": [
     {
       "id": "arrival",
       "time": "18:00",
-      "title": { "en": "Guest Arrival", "fa": "ورود مهمانان" },
-      "subtitle": {
-        "en": "Greet family and friends, and find your seats",
-        "fa": "با خانواده و دوستان احوال‌پرسی کنید و سر جای خود بنشینید"
+      "title": { "en": "Guest Arrival", "fa": "تشريف آوري مهمانان" },
+      "body": {
+        "en": "We are truly honored by your presence. Thank you for celebrating this special occasion with us.",
+        "fa": "تشریف ‌آوری شما مایهٔ افتخار و خوشی ما ميباشد و صمیمانه سپاسگزاریم"
       }
     },
     {
       "id": "quran",
       "time": "18:45",
-      "title": {
-        "en": "Qur’an Recitation & Opening Du’a",
-        "fa": "تلاوت قرآن و دعای آغازین"
-      },
-      "subtitle": {
-        "en": "A recitation followed by a du’a for the newlyweds",
-        "fa": "تلاوت قرآن و سپس دعایی برای زوج جوان"
+      "title": { "en": "Qur’an Recitation & Opening Du’a", "fa": "تلاوت آیاتی از کلام‌الله مجید" },
+      "body": {
+        "en": "“And among His signs is that He created for you spouses from among yourselves that you may find tranquility in them; and He placed between you affection and mercy.” (Qur’an 30:21)",
+        "fa": "﴿وَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُمْ مِنْ أَنْفُسِكُمْ أَزْوَاجًا لِّتَسْكُنُوا إِلَيْهَا وَجَعَلَ بَيْنَكُم مَّوَدَّةً وَرَحْمَةً﴾"
       }
     },
     {
       "id": "entrance",
       "time": "19:00",
       "title": { "en": "Bride & Groom Entrance", "fa": "ورود عروس و داماد" },
-      "subtitle": {
-        "en": "Welcomed by family and guests",
-        "fa": "با استقبال خانواده و مهمانان"
+      "body": {
+        "en": "Please join us in welcoming the newlyweds.",
+        "fa": "از مهمانان گرامی تقاضا می‌شود برای استقبال از عروس و داماد آماده باشند"
       }
     },
     {
       "id": "green-shaal",
       "time": "19:30",
       "title": { "en": "Green Shaal Ceremony", "fa": "مراسم شال سبز" },
-      "subtitle": {
-        "en": "A special family tradition honoring the couple",
-        "fa": "سنتی خانوادگی و ویژه برای گرامیداشت عروس و داماد"
+      "body": {
+        "en": "A special family tradition honoring the bride and groom.",
+        "fa": "سنتی خانوادگی و ویژه برای گرامیداشت عروس و داماد."
       }
     },
     {
       "id": "dinner",
       "time": "20:00",
-      "title": { "en": "Dinner Service", "fa": "صرف شام" },
-      "subtitle": {
-        "en": "Enjoy dinner and fellowship with family and friends",
-        "fa": "از شام و همنشینی با خانواده و دوستان لذت ببرید"
+      "title": { "en": "Dinner Service", "fa": "صرف طعام" },
+      "body": {
+        "en": "Guests are invited to enjoy dinner, refreshments, and fellowship with family and friends.",
+        "fa": "از مهمانان دعوت می‌شود از شام، پذیرایی و همنشینی با خانواده و دوستان لذت ببرند."
       }
     },
     {
       "id": "adhan",
       "time": "21:15",
-      "title": {
-        "en": "Adhan & Prayer Preparation",
-        "fa": "اذان و آماده‌سازی برای نماز"
-      },
-      "subtitle": {
-        "en": "The Adhan will be called — please prepare for prayer",
-        "fa": "اذان گفته می‌شود — لطفاً برای نماز آماده شوید"
+      "title": { "en": "Adhan & Prayer Preparation", "fa": "اذان و آماده‌سازی برای نماز" },
+      "body": {
+        "en": "Guests are kindly invited to proceed for Isha prayer.",
+        "fa": "از مهمانان گرامی دعوت می‌شود برای ادای نماز عشاء تشریف ببرند"
       }
     },
     {
       "id": "prayer",
       "time": "21:16",
       "title": { "en": "Congregational Prayer", "fa": "نماز جماعت" },
-      "subtitle": {
-        "en": "Prayer break for guests · until 9:40 PM",
-        "fa": "زمان نماز برای مهمانان · تا ساعت ۹:۴۰"
+      "body": {
+        "en": "Prayer break for guests.",
+        "fa": "زمان نماز برای مهمانان."
       }
     },
     {
       "id": "return",
       "time": "21:40",
-      "title": {
-        "en": "Bride & Groom Grand Return",
-        "fa": "بازگشت باشکوه عروس و داماد"
-      },
-      "subtitle": {
-        "en": "The couple return for the evening celebration",
-        "fa": "عروس و داماد برای ادامه جشن بازمی‌گردند"
+      "title": { "en": "Bride & Groom Grand Return", "fa": "بازگشت باشکوه عروس و داماد" },
+      "body": {
+        "en": "The bride and groom return for the evening celebration.",
+        "fa": "عروس و داماد برای ادامه جشن شبانه بازمی‌گردند."
       }
     },
     {
       "id": "jewelry-cake",
       "time": "21:45",
-      "title": {
-        "en": "Jewelry Presentation & Cake Cutting",
-        "fa": "اهدای جواهرات و بریدن کیک"
-      },
-      "subtitle": {
-        "en": "Gifts and blessings, then the cake-cutting ceremony",
-        "fa": "تقدیم هدایا و دعای خیر، سپس مراسم بریدن کیک"
+      "title": { "en": "Jewelry Presentation & Cake Cutting", "fa": "اهدای جواهرات و بریدن کیک" },
+      "body": {
+        "en": "Family members present gifts and blessings to the bride, followed by the cake-cutting ceremony.",
+        "fa": "اعضای خانواده هدایا و دعای خیر خود را تقدیم عروس می‌کنند و سپس مراسم بریدن کیک برگزار می‌شود."
       }
     },
     {
       "id": "photos",
       "time": "22:30",
-      "title": { "en": "Family Photos", "fa": "عکس خانوادگی" },
-      "subtitle": {
-        "en": "Family and group photographs with the couple",
-        "fa": "عکس‌های خانوادگی و گروهی با عروس و داماد"
+      "title": { "en": "Family Photos", "fa": "عکس‌های یادگاری" },
+      "body": {
+        "en": "To ensure everyone has an opportunity to take photos with the bride and groom, we kindly invite our guests to come to the stage in the following order.",
+        "fa": "جهت نظم بهتر و استفاده مؤثر از وقت، از مهمانان گرامی تقاضا می‌شود به ترتیب ذیل برای گرفتن عکس‌های یادگاری با عروس و داماد تشریف بیاورند."
       }
     },
     {
       "id": "farewell",
       "time": "23:00",
-      "title": { "en": "Farewell & Closing", "fa": "بدرقه و پایان مراسم" },
-      "subtitle": {
-        "en": "The celebration concludes — farewell to the newlyweds",
-        "fa": "جشن به پایان می‌رسد — بدرقه زوج جوان"
+      "title": { "en": "Farewell & Closing", "fa": "بدرقه و سپاسگزاری" },
+      "body": {
+        "en": "Thank you for honoring us with your presence and heartfelt prayers. May Allah bless you and your families with health, happiness and endless blessings.",
+        "fa": "از حضور، محبت و دعاهای خیر شما صمیمانه سپاسگزاریم. خداوند متعال به شما و خانواده‌های محترم تان صحت، سعادت و برکت روز افزون عنایت فرماید"
       }
     }
   ]

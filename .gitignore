@@ -2,5 +2,7 @@ node_modules
 dist
 media/generated
 voices
+.venv-piper
+devices.json
 *.log
 .DS_Store

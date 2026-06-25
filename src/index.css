@@ -60,6 +60,29 @@ body {
 }
 ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
 
+/* Dark, always-visible scrollbar (used on the light TV schedule) */
+.dark-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.45) rgba(0, 0, 0, 0.06);
+}
+.dark-scroll::-webkit-scrollbar {
+  width: 10px;
+}
+.dark-scroll::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.06);
+  border-radius: 8px;
+}
+.dark-scroll::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+.dark-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.7);
+  background-clip: content-box;
+}
+
 button:not(:disabled),
 [role="button"] { cursor: pointer; }
 
@@ -144,16 +167,46 @@ textarea:focus {
 }
 
 .roll-loop .roll-char > span {
-  animation: roll-flip 3s cubic-bezier(0.16, 1, 0.3, 1) infinite;
-  animation-delay: calc(var(--roll-index) * 55ms);
+  animation: roll-flip 3.2s ease-in-out infinite;
+  animation-delay: calc(var(--roll-index) * 60ms);
 }
 
+/* One-way roll: 0 -> -100% lands on the identical second copy, so looping back
+   to 0 is seamless — it always rolls forward, never reverses. */
 @keyframes roll-flip {
-  0%, 34%, 100% { transform: translateY(0) rotateX(0deg); }
-  50%, 70% { transform: translateY(-100%) rotateX(28deg); }
+  0%, 26% { transform: translateY(0) rotateX(0deg); }
+  50% { transform: translateY(-50%) rotateX(34deg); }
+  74%, 100% { transform: translateY(-100%) rotateX(0deg); }
+}
+
+/* ---- Warm-white shine (announcement text) -------------------------------
+   Letters are a soft warm white with a slightly brighter highlight that drifts
+   across them, plus a faint warm glow. Subtle, not neon.                    */
+.shine-text {
+  background: linear-gradient(
+    100deg,
+    #ece4d4 0%,
+    #ece4d4 40%,
+    #fffaf0 50%,
+    #ece4d4 60%,
+    #ece4d4 100%
+  );
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 12px rgba(255, 240, 210, 0.18);
+  animation: text-shine 5.5s linear infinite;
+}
+
+@keyframes text-shine {
+  0% { background-position: 180% 0; }
+  100% { background-position: -80% 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .animated-fill::after { transition: none !important; }
   .roll-loop .roll-char > span { animation: none !important; }
+  .shine-text { animation: none !important; }
 }

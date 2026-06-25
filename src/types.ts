@@ -10,10 +10,10 @@ export interface EventItem {
   id: string;
   /** 24h "HH:MM" local time the segment starts. */
   time: string;
+  /** Short name of the segment (shown small + in the schedule). */
   title: Bilingual;
-  subtitle?: Bilingual;
-  /** Emoji or short glyph shown on the timeline. Optional. */
-  icon?: string;
+  /** Main descriptive text (the big text shown in the "Now" box). */
+  body?: Bilingual;
 }
 
 export interface ScheduleData {
@@ -41,6 +41,17 @@ export interface AppData {
   announcements: Announcement[];
 }
 
+// ---- Networked devices (control panel ⇄ TV via the server) ---------------
+export interface DeviceInfo {
+  id: string;
+  role: "display" | "control";
+  name: string;
+  admin: boolean;
+  approved: boolean;
+  connected: boolean;
+  ip?: string;
+}
+
 // ---- Cross-window message bus (Control panel -> Display) -----------------
 export type BusMessage =
   | {
@@ -51,8 +62,14 @@ export type BusMessage =
         audio?: { en?: string; fa?: string };
         /** Order languages are spoken in. */
         order: ("en" | "fa")[];
+        /** How long to keep it on screen (ms). Omit for audio-length default. */
+        holdMs?: number;
       };
     }
   | { type: "stop" }
+  /** Display -> Control: the announcement finished/cleared on screen. */
+  | { type: "announceEnded" }
   | { type: "setCurrent"; payload: { eventId: string | null } }
+  /** Schedule/announcements were edited — refetch content. */
+  | { type: "reload" }
   | { type: "ping" };

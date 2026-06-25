@@ -5,6 +5,9 @@
   "type": "module",
   "description": "Live wedding venue dashboard: schedule, announcements, bilingual TTS (EN/FA).",
   "scripts": {
+    "setup:tts": "node scripts/setup-tts.mjs",
+    "predev": "node scripts/setup-tts.mjs",
+    "prestart": "node scripts/setup-tts.mjs",
     "dev": "concurrently -n server,web -c green,cyan \"npm:dev:server\" \"npm:dev:web\"",
     "dev:web": "vite",
     "dev:server": "node server/index.js",
@@ -16,11 +19,14 @@
     "cors": "^2.8.5",
     "express": "^4.21.2",
     "framer-motion": "^11.18.0",
+    "qrcode": "^1.5.4",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "ws": "^8.18.0"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.0.0",
+    "@types/qrcode": "^1.5.5",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
     "@vitejs/plugin-react": "^4.3.4",
