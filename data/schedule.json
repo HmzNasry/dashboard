@@ -29,15 +29,6 @@
       }
     },
     {
-      "id": "opening",
-      "time": "19:05",
-      "title": { "en": "Opening Remarks", "fa": "آغاز رسمی محفل" },
-      "body": {
-        "en": "May this evening be filled with love, joy and Allah’s blessings.",
-        "fa": "امیدواریم این محفل با محبت، صمیمیت و برکت الهی همراه باشد."
-      }
-    },
-    {
       "id": "dua",
       "time": "19:15",
       "title": { "en": "Du’a for the Couple", "fa": "دعای خیر" },
@@ -57,7 +48,7 @@
     },
     {
       "id": "cake",
-      "time": "19:50",
+      "time": "21:45",
       "title": { "en": "Cake Cutting & Family Photos", "fa": "قطع و توزیع کیک و عکس یادگاری" },
       "body": {
         "en": "The couple cut the cake, followed by keepsake photographs.",
@@ -66,7 +57,7 @@
     },
     {
       "id": "dinner",
-      "time": "20:10",
+      "time": "20:00",
       "title": { "en": "Dinner", "fa": "صرف طعام" },
       "body": {
         "en": "Please enjoy your meal.",
@@ -75,7 +66,7 @@
     },
     {
       "id": "prayer",
-      "time": "21:10",
+      "time": "21:15",
       "title": { "en": "Maghrib Prayer", "fa": "ادای نماز شام" },
       "body": {
         "en": "Guests are kindly invited to proceed for prayer.",
@@ -84,7 +75,7 @@
     },
     {
       "id": "photos",
-      "time": "21:30",
+      "time": "22:30",
       "title": { "en": "Family Photo Session", "fa": "عکس‌های یادگاری" },
       "body": {
         "en": "To ensure everyone has an opportunity to take photos with the bride and groom, we kindly invite our guests to come to the stage in the following order.",
@@ -93,7 +84,7 @@
     },
     {
       "id": "farewell",
-      "time": "22:55",
+      "time": "23:00",
       "title": { "en": "Farewell & Closing", "fa": "بدرقه و سپاسگزاری" },
       "body": {
         "en": "Thank you for honoring us with your presence and heartfelt prayers. May Allah bless you and your families with health, happiness and endless blessings.",
