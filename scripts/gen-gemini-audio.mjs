@@ -84,28 +84,34 @@ async function main() {
   const data = JSON.parse(fs.readFileSync(ANN, "utf8"));
   let made = 0;
 
-  for (const a of data.announcements) {
-    a.audio = a.audio || {};
-    for (const lang of ["en", "fa"]) {
-      const text = a.text?.[lang];
-      if (!text || !text.trim()) continue;
-      const file = `${a.id}-${lang}.wav`;
-      const dest = path.join(MEDIA, file);
-      a.audio[lang] = `/audio/${file}`; // point the app at the generated clip
-      if (!FORCE && fs.existsSync(dest)) {
-        process.stdout.write(`· skip ${file}\n`);
-        continue;
+  // Persist announcements.json even on partial failure (e.g. daily quota), so a
+  // later re-run just fills in what's missing.
+  const save = () => fs.writeFileSync(ANN, JSON.stringify(data, null, 2) + "\n");
+  try {
+    for (const a of data.announcements) {
+      a.audio = a.audio || {};
+      for (const lang of ["en", "fa"]) {
+        const text = a.text?.[lang];
+        if (!text || !text.trim()) continue;
+        const file = `${a.id}-${lang}.wav`;
+        const dest = path.join(MEDIA, file);
+        a.audio[lang] = `/audio/${file}`; // point the app at the generated clip
+        if (!FORCE && fs.existsSync(dest)) {
+          process.stdout.write(`· skip ${file}\n`);
+          continue;
+        }
+        process.stdout.write(`→ ${file} … `);
+        const wav = await tts(key, text);
+        fs.writeFileSync(dest, wav);
+        console.log(`ok (${Math.round(wav.length / 1024)} KB)`);
+        made++;
+        save();
+        await sleep(RATE_MS);
       }
-      process.stdout.write(`→ ${file} … `);
-      const wav = await tts(key, text);
-      fs.writeFileSync(dest, wav);
-      console.log(`ok (${Math.round(wav.length / 1024)} KB)`);
-      made++;
-      await sleep(RATE_MS);
     }
+  } finally {
+    save();
   }
-
-  fs.writeFileSync(ANN, JSON.stringify(data, null, 2) + "\n");
   console.log(`\nDone. Generated ${made} clip(s); announcements.json updated.`);
 }
 

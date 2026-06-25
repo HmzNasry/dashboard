@@ -8,7 +8,10 @@
         "en": "Ladies and gentlemen, welcome. We are truly honored by your presence and thank you for celebrating with us.",
         "fa": "خانم‌ها و آقایان، خوش آمدید. تشریف‌آوری شما مایهٔ افتخار ماست و صمیمانه سپاسگزاریم."
       },
-      "audio": { "en": "/audio/welcome-en.mp3", "fa": "/audio/welcome-fa.mp3" }
+      "audio": {
+        "en": "/audio/welcome-en.wav",
+        "fa": "/audio/welcome-fa.wav"
+      }
     },
     {
       "id": "couple-entrance",
@@ -18,7 +21,10 @@
         "en": "Please join us in welcoming the newlyweds.",
         "fa": "از مهمانان گرامی تقاضا می‌شود برای استقبال از عروس و داماد آماده باشند."
       },
-      "audio": { "en": "/audio/couple-entrance-en.mp3", "fa": "/audio/couple-entrance-fa.mp3" }
+      "audio": {
+        "en": "/audio/couple-entrance-en.wav",
+        "fa": "/audio/couple-entrance-fa.wav"
+      }
     },
     {
       "id": "quran",
@@ -28,7 +34,10 @@
         "en": "We will now begin with a recitation from the Holy Qur’an. Kindly take your seats and observe silence.",
         "fa": "اکنون مراسم با تلاوت آیاتی از کلام‌الله مجید آغاز می‌شود. لطفاً بنشینید و سکوت را رعایت فرمایید."
       },
-      "audio": { "en": "/audio/quran-en.mp3", "fa": "/audio/quran-fa.mp3" }
+      "audio": {
+        "en": "/audio/quran-en.wav",
+        "fa": "/audio/quran-fa.wav"
+      }
     },
     {
       "id": "cake",
@@ -38,7 +47,10 @@
         "en": "Please gather around for the cake cutting and keepsake photographs.",
         "fa": "لطفاً برای مراسم بریدن کیک و گرفتن عکس‌های یادگاری گرد هم تشریف بیاورید."
       },
-      "audio": { "en": "/audio/cake-en.mp3", "fa": "/audio/cake-fa.mp3" }
+      "audio": {
+        "en": "/audio/cake-en.wav",
+        "fa": "/audio/cake-fa.wav"
+      }
     },
     {
       "id": "prayer",
@@ -48,7 +60,10 @@
         "en": "Guests are kindly invited to proceed for prayer.",
         "fa": "از مهمانان گرامی دعوت می‌شود برای ادای نماز تشریف ببرند."
       },
-      "audio": { "en": "/audio/prayer-en.mp3", "fa": "/audio/prayer-fa.mp3" }
+      "audio": {
+        "en": "/audio/prayer-en.wav",
+        "fa": "/audio/prayer-fa.wav"
+      }
     },
     {
       "id": "dinner",
@@ -58,7 +73,10 @@
         "en": "Dinner is now served. Please enjoy your meal.",
         "fa": "شام آماده است. نوش جان؛ از صرف غذا لذت ببرید."
       },
-      "audio": { "en": "/audio/dinner-en.mp3", "fa": "/audio/dinner-fa.mp3" }
+      "audio": {
+        "en": "/audio/dinner-en.wav",
+        "fa": "/audio/dinner-fa.wav"
+      }
     },
     {
       "id": "photos-intro",
@@ -68,7 +86,10 @@
         "en": "We now begin the family photo session. To ensure everyone has a chance for photos with the bride and groom, we kindly invite guests to the stage in order.",
         "fa": "اکنون برنامهٔ گرفتن عکس‌های یادگاری آغاز می‌شود. جهت نظم بهتر، از مهمانان گرامی تقاضا می‌شود به ترتیب برای عکس با عروس و داماد به جایگاه تشریف بیاورند."
       },
-      "audio": { "en": "/audio/photos-intro-en.mp3", "fa": "/audio/photos-intro-fa.mp3" }
+      "audio": {
+        "en": "/audio/photos-intro-en.wav",
+        "fa": "/audio/photos-intro-fa.wav"
+      }
     },
     {
       "id": "photos-bride-family",
@@ -78,7 +99,10 @@
         "en": "We kindly invite the immediate family of the bride to the stage for photographs.",
         "fa": "از والدین، خواهران، برادران و اقارب نزدیک عروس دعوت می‌شود برای عکس به جایگاه تشریف بیاورند."
       },
-      "audio": { "en": "/audio/photos-bride-family-en.mp3", "fa": "/audio/photos-bride-family-fa.mp3" }
+      "audio": {
+        "en": "/audio/photos-bride-family-en.wav",
+        "fa": "/audio/photos-bride-family-fa.wav"
+      }
     },
     {
       "id": "photos-groom-family",
@@ -88,7 +112,10 @@
         "en": "We kindly invite the immediate family of the groom to the stage for photographs.",
         "fa": "از والدین، خواهران، برادران و اقارب نزدیک داماد دعوت می‌شود برای عکس به جایگاه تشریف بیاورند."
       },
-      "audio": { "en": "/audio/photos-groom-family-en.mp3", "fa": "/audio/photos-groom-family-fa.mp3" }
+      "audio": {
+        "en": "/audio/photos-groom-family-en.wav",
+        "fa": "/audio/photos-groom-family-fa.wav"
+      }
     },
     {
       "id": "photos-bride-friends",
@@ -98,7 +125,10 @@
         "en": "We now invite the friends of the bride to the stage for photographs.",
         "fa": "از دوستان عروس دعوت می‌شود برای عکس به جایگاه تشریف بیاورند."
       },
-      "audio": { "en": "/audio/photos-bride-friends-en.mp3", "fa": "/audio/photos-bride-friends-fa.mp3" }
+      "audio": {
+        "en": "/audio/photos-bride-friends-en.wav",
+        "fa": "/audio/photos-bride-friends-fa.wav"
+      }
     },
     {
       "id": "photos-groom-friends",
@@ -108,7 +138,10 @@
         "en": "We now invite the friends of the groom to the stage for photographs.",
         "fa": "از دوستان داماد دعوت می‌شود برای عکس به جایگاه تشریف بیاورند."
       },
-      "audio": { "en": "/audio/photos-groom-friends-en.mp3", "fa": "/audio/photos-groom-friends-fa.mp3" }
+      "audio": {
+        "en": "/audio/photos-groom-friends-en.wav",
+        "fa": "/audio/photos-groom-friends-fa.wav"
+      }
     },
     {
       "id": "photos-all",
@@ -118,7 +151,10 @@
         "en": "We now warmly invite all remaining guests to the stage for photographs. Thank you for your cooperation.",
         "fa": "اکنون از همهٔ مهمانان گرامی دعوت می‌شود برای عکس به جایگاه تشریف بیاورند. از همکاری و حوصلهٔ شما سپاسگزاریم."
       },
-      "audio": { "en": "/audio/photos-all-en.mp3", "fa": "/audio/photos-all-fa.mp3" }
+      "audio": {
+        "en": "/audio/photos-all-en.wav",
+        "fa": "/audio/photos-all-fa.wav"
+      }
     },
     {
       "id": "farewell",
@@ -128,7 +164,10 @@
         "en": "Thank you for honoring us with your presence and heartfelt prayers. May Allah bless you and your families with health, happiness and endless blessings.",
         "fa": "از حضور، محبت و دعاهای خیر شما صمیمانه سپاسگزاریم. خداوند متعال به شما و خانواده‌های محترم‌تان صحت، سعادت و برکت روزافزون عنایت فرماید."
       },
-      "audio": { "en": "/audio/farewell-en.mp3", "fa": "/audio/farewell-fa.mp3" }
+      "audio": {
+        "en": "/audio/farewell-en.wav",
+        "fa": "/audio/farewell-fa.wav"
+      }
     }
   ]
 }
