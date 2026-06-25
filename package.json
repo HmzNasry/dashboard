@@ -6,6 +6,7 @@
   "description": "Live wedding venue dashboard: schedule, announcements, bilingual TTS (EN/FA).",
   "scripts": {
     "setup:tts": "node scripts/setup-tts.mjs",
+    "gen:gemini": "node scripts/gen-gemini-audio.mjs",
     "predev": "node scripts/setup-tts.mjs",
     "prestart": "node scripts/setup-tts.mjs",
     "dev": "concurrently -n server,web -c green,cyan \"npm:dev:server\" \"npm:dev:web\"",

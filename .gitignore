@@ -3,6 +3,7 @@ dist
 media/generated
 .venv-piper
 devices.json
+.gemini.key
 *.log
 .DS_Store
 
