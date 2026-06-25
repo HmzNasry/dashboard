@@ -35,19 +35,29 @@ export function AnnouncementOverlay({
   const cancelRef = useRef<(() => void) | null>(null);
   const settleTimer = useRef<number | undefined>(undefined);
   const runRef = useRef(0);
+  const activeRef = useRef(false);
 
   useEffect(() => {
     const finish = () => {
+      activeRef.current = false;
       setEntry(null);
       onEnded();
+    };
+    const cancelActive = () => {
+      runRef.current++;
+      window.clearTimeout(settleTimer.current);
+      cancelRef.current?.();
+      finish();
     };
 
     const unsub = subscribe(async (msg) => {
       if (msg.type === "stop") {
-        runRef.current++;
-        window.clearTimeout(settleTimer.current);
-        cancelRef.current?.();
-        finish();
+        cancelActive();
+        return;
+      }
+      // Switching the live event clears whatever announcement is on screen.
+      if (msg.type === "setCurrent") {
+        if (activeRef.current) cancelActive();
         return;
       }
       if (msg.type !== "announce") return;
@@ -55,6 +65,7 @@ export function AnnouncementOverlay({
       const my = ++runRef.current;
       window.clearTimeout(settleTimer.current);
       cancelRef.current?.(); // stop any audio still playing from a prior one
+      activeRef.current = true;
       setEntry({ text: msg.payload.text, id: my, settled: false });
       settleTimer.current = window.setTimeout(() => {
         setEntry((e) => (e && e.id === my ? { ...e, settled: true } : e));
@@ -124,9 +135,9 @@ export function AnnouncementOverlay({
                 className="flex w-full flex-col items-center"
               >
                 {/* Banner */}
-                <div className="flex items-center justify-center gap-6">
+                <div className="flex items-center justify-center gap-7">
                   <motion.span
-                    className="h-px w-16 origin-right bg-neutral-600"
+                    className="neon-line neon-rtl h-px w-20 origin-right"
                     animate={{ opacity: settled ? 1 : 0, scaleX: settled ? 1 : 0 }}
                     transition={{ duration: 0.5 }}
                   />
@@ -150,12 +161,12 @@ export function AnnouncementOverlay({
                       <RollText
                         text="ANNOUNCEMENT"
                         loop={settled}
-                        className="font-serif text-[2rem] font-semibold tracking-[0.32em]"
+                        className="font-serif text-[3rem] font-semibold tracking-[0.3em] pl-[0.3em]"
                       />
                     </motion.div>
                   </motion.div>
                   <motion.span
-                    className="h-px w-16 origin-left bg-neutral-600"
+                    className="neon-line neon-ltr h-px w-20 origin-left"
                     animate={{ opacity: settled ? 1 : 0, scaleX: settled ? 1 : 0 }}
                     transition={{ duration: 0.5 }}
                   />
@@ -169,11 +180,11 @@ export function AnnouncementOverlay({
                     transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
                     className="mt-12 flex w-full max-w-[86%] flex-col items-center"
                   >
-                    <p className="shine-text text-balance text-[clamp(2.25rem,4vw,4rem)] font-semibold leading-tight tracking-tight">
+                    <p className="shine-text text-balance text-[clamp(2.7rem,4.8vw,4.9rem)] font-semibold leading-tight tracking-tight">
                       {entry.text.en}
                     </p>
-                    <div className="my-7 h-px w-28 bg-[rgba(255,240,210,0.35)] shadow-[0_0_10px_rgba(255,235,200,0.3)]" />
-                    <p className="fa shine-text text-balance text-[clamp(2.25rem,4vw,4rem)] font-semibold leading-snug tracking-tight">
+                    <div className="neon-pulse my-7 h-px w-28" />
+                    <p className="fa shine-text text-balance text-[clamp(2.7rem,4.8vw,4.9rem)] font-semibold leading-snug tracking-tight">
                       {entry.text.fa}
                     </p>
                   </motion.div>

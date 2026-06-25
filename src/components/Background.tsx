@@ -1,20 +1,19 @@
-// Clean light backdrop for the TV — no image, just a soft glow + vignette.
+// TV backdrop: a softly-blurred floral photo (flowers framing the edges) under
+// a warm cream wash so the dark schedule text and white cards stay readable.
+// Swap the image by replacing public/bg.jpg.
 export function Background() {
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden bg-[#f4f2ed]">
+      {/* Blurred photo. Scaled up so the blur doesn't reveal soft edges. */}
       <div
-        className="absolute -top-1/3 left-1/2 h-[80vh] w-[80vh] -translate-x-1/2 rounded-full blur-[160px]"
-        style={{
-          background:
-            "radial-gradient(circle, rgba(255,255,255,0.65), transparent 60%)",
-        }}
+        className="absolute inset-0 scale-110 bg-cover bg-center blur-[7px]"
+        style={{ backgroundImage: "url(/bg.jpg)" }}
       />
+      {/* Flat, even cream wash for contrast — no gradients, so nothing reads as
+          a faint "container" outline behind the cards. */}
       <div
         className="absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.04) 100%)",
-        }}
+        style={{ background: "rgba(244,242,237,0.5)" }}
       />
     </div>
   );

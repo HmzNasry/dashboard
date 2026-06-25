@@ -70,6 +70,9 @@ export function Control({
   const [eventEdit, setEventEdit] = useState<EventItem | "new" | null>(null);
   const [annEdit, setAnnEdit] = useState<Announcement | "new" | null>(null);
   const [videoOn, setVideoOn] = useState(false);
+  // True whenever an announcement is on the TV — shared across all control
+  // devices via the bus. Announcements and the slideshow are mutually exclusive.
+  const [annActive, setAnnActive] = useState(false);
   const [clock, setClock] = useState(0);
 
   useEffect(() => () => client.close(), [client]);
@@ -86,7 +89,13 @@ export function Control({
   useEffect(
     () =>
       client.onBus((m) => {
-        if (m.type === "announceEnded") setActiveId(null);
+        if (m.type === "announceEnded") {
+          setActiveId(null);
+          setAnnActive(false);
+        } else if (m.type === "announce") setAnnActive(true);
+        else if (m.type === "stop") setAnnActive(false);
+        // Slideshow toggle is shared: reflect a change made on any other device.
+        else if (m.type === "video") setVideoOn(m.payload.on);
       }),
     [client],
   );
@@ -110,6 +119,8 @@ export function Control({
   const HOLD_MS = 5 * 60 * 1000;
 
   const fire = (a: Pick<Announcement, "text" | "audio">, label?: string) => {
+    setAnnActive(true);
+    if (videoOn) toggleVideo(false); // an announcement takes over the screen
     client.send({
       type: "announce",
       payload: { text: a.text, audio: a.audio, chime, order, holdMs: HOLD_MS },
@@ -140,10 +151,19 @@ export function Control({
   // No toast — clearing is its own confirmation (checkmark / button flip).
   const stop = () => {
     setActiveId(null);
+    setAnnActive(false);
     client.send({ type: "stop" });
   };
 
   const toggleVideo = (on: boolean) => {
+    // Turning the slideshow ON takes over the screen: cancel any live
+    // announcement first, then show the slideshow. (Conversely, firing an
+    // announcement or switching events turns the slideshow off — see fire/pickEvent.)
+    if (on && annActive) {
+      setActiveId(null);
+      setAnnActive(false);
+      client.send({ type: "stop" });
+    }
     setVideoOn(on);
     client.send({ type: "video", payload: { on } });
   };
@@ -223,15 +243,18 @@ export function Control({
     refresh();
   };
 
-  // Activate an event: fire its linked broadcast (if any), then put it on screen.
+  // Activate an event. Order matters: setCurrent is sent first so the TV cancels
+  // any announcement that's currently up, *then* the event's linked broadcast (if
+  // any) starts fresh. Also drops the slideshow.
   const pickEvent = (e: EventItem) => {
     if (pinned === e.id) {
       setCurrent(null);
       return;
     }
+    if (videoOn) toggleVideo(false);
+    setCurrent(e.id);
     const linked = broadcastFor(e);
     if (linked) broadcast(linked);
-    setCurrent(e.id);
   };
 
   // This device was removed by the admin — gone until the link is opened again.
@@ -547,13 +570,21 @@ function DeviceRow({
       {d.role === "control" && !d.admin && (
         <div className="flex shrink-0 items-center gap-2">
           {!d.approved ? (
-            <button
-              onClick={() => admin.approve(d.id)}
-              className="animated-fill rounded-lg border border-emerald-600/70 px-3 py-1.5 text-sm text-emerald-300 transition-colors duration-300 hover:text-black"
-              style={{ "--fill-base": "16 185 129" } as CSSProperties}
-            >
-              Approve
-            </button>
+            <>
+              <button
+                onClick={() => admin.approve(d.id)}
+                className="animated-fill rounded-lg border border-emerald-600/70 px-3 py-1.5 text-sm text-emerald-300 transition-colors duration-300 hover:text-black"
+                style={{ "--fill-base": "16 185 129" } as CSSProperties}
+              >
+                Approve
+              </button>
+              <button
+                onClick={() => admin.remove(d.id)}
+                className="animated-fill fill-danger rounded-lg border border-red-700/70 px-3 py-1.5 text-sm text-red-300 transition-colors duration-300 hover:text-white"
+              >
+                Reject
+              </button>
+            </>
           ) : (
             <button
               onClick={() => admin.remove(d.id)}

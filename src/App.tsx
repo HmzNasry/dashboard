@@ -1,22 +1,70 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { Display } from "./views/Display";
 import { Control } from "./views/Control";
+import { SchedulePage } from "./views/SchedulePage";
 import { fetchData } from "./lib/api";
 import type { AppData } from "./types";
 
-// Tiny zero-dependency router. Open the TV on "/" and the operator laptop
-// window on "/control" (or "#control").
-function isControl(): boolean {
+// Tiny zero-dependency router. TV on "/", operator laptop on "/control"
+// (or "#control"), and the guest-facing mobile schedule on "/schedule".
+type Route = "control" | "schedule" | "display";
+function currentRoute(): Route {
+  const path = window.location.pathname.replace(/\/+$/, "");
+  const hash = window.location.hash;
+  if (path.endsWith("/control") || hash.includes("control")) return "control";
+  if (path.endsWith("/schedule") || hash.includes("schedule")) return "schedule";
+  return "display";
+}
+
+// Simple shared-password gate for the control panel. Client-side only (the
+// server still requires admin approval to actually drive the TV) — this just
+// keeps casual guests out of the operator UI. Asked once per browser tab.
+const CONTROL_PASSWORD = "Vancouver@2026";
+function ControlGate({ children }: { children: ReactNode }) {
+  const [authed, setAuthed] = useState(
+    () => sessionStorage.getItem("wd-control-ok") === "1",
+  );
+
+  const ask = useCallback(() => {
+    // Loop until correct or cancelled.
+    for (;;) {
+      const entry = window.prompt("Enter the control password:");
+      if (entry === null) return false; // cancelled
+      if (entry === CONTROL_PASSWORD) {
+        sessionStorage.setItem("wd-control-ok", "1");
+        setAuthed(true);
+        return true;
+      }
+      window.alert("Incorrect password.");
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!authed) ask();
+  }, [authed, ask]);
+
+  if (authed) return <>{children}</>;
   return (
-    window.location.pathname.replace(/\/+$/, "").endsWith("/control") ||
-    window.location.hash.includes("control")
+    <div className="safe flex h-full flex-col items-center justify-center bg-[#0a0a0a] px-8 text-center text-neutral-100">
+      <h1 className="text-2xl font-semibold tracking-tight">Locked</h1>
+      <p className="mt-2 max-w-sm text-neutral-400">
+        The control panel is password protected.
+      </p>
+      <button
+        onClick={ask}
+        className="mt-6 rounded-lg border border-neutral-700 px-4 py-2 text-sm text-neutral-200 transition-colors hover:bg-neutral-800"
+      >
+        Unlock
+      </button>
+    </div>
   );
 }
 
 export function App() {
   const [data, setData] = useState<AppData | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const control = isControl();
+  const route = currentRoute();
+  const control = route === "control";
 
   const reload = useCallback(
     () =>
@@ -71,9 +119,15 @@ export function App() {
     );
   }
 
-  return control ? (
-    <Control data={data} reload={reload} />
-  ) : (
-    <Display data={data} reload={reload} />
-  );
+  if (route === "control") {
+    return (
+      <ControlGate>
+        <Control data={data} reload={reload} />
+      </ControlGate>
+    );
+  }
+  if (route === "schedule") {
+    return <SchedulePage data={data} />;
+  }
+  return <Display data={data} reload={reload} />;
 }

@@ -2,6 +2,7 @@ node_modules
 dist
 media/generated
 .venv-piper
+piper/
 devices.json
 .gemini.key
 *.log

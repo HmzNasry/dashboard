@@ -278,17 +278,39 @@ const isLoopback = (ip) => {
   return n === "127.0.0.1" || n === "::1" || n === "localhost";
 };
 
+// Virtual / non-physical adapters phones usually can't reach. We don't drop
+// them (a setup might legitimately use one) — just rank them last so the real
+// Wi-Fi/Ethernet address is what the QR/link defaults to.
+const VIRTUAL_IF =
+  /(vethernet|virtualbox|vmware|hyper-?v|loopback|wsl|tailscale|zerotier|hamachi|docker|default switch|bluetooth|tap|tun)/i;
+const PHYSICAL_IF = /(wi-?fi|wlan|ethernet|en\d|eth\d)/i;
+
+function isPrivateV4(ip) {
+  const o = ip.split(".").map(Number);
+  return (
+    o[0] === 10 ||
+    (o[0] === 172 && o[1] >= 16 && o[1] <= 31) ||
+    (o[0] === 192 && o[1] === 168)
+  );
+}
+
+// Computed fresh on every call, so it always reflects the laptop's *current*
+// network (switching Wi-Fi/hotspot updates the link). Best candidate first.
 function lanUrls() {
-  const out = [];
+  const cands = [];
   const ifaces = os.networkInterfaces();
   for (const name of Object.keys(ifaces)) {
     for (const ni of ifaces[name] || []) {
-      if (ni.family === "IPv4" && !ni.internal) {
-        out.push(`http://${ni.address}:${PORT}/control`);
-      }
+      if (ni.family !== "IPv4" || ni.internal) continue;
+      let score = 0;
+      if (!isPrivateV4(ni.address)) score += 4; // public / 169.254.* less likely the LAN
+      if (VIRTUAL_IF.test(name)) score += 8;
+      if (PHYSICAL_IF.test(name)) score -= 2;
+      cands.push({ address: ni.address, score });
     }
   }
-  return out;
+  cands.sort((a, b) => a.score - b.score);
+  return cands.map((c) => `http://${c.address}:${PORT}/control`);
 }
 
 const clients = new Set(); // { ws, id, role, name, admin, approved, ip }
@@ -453,3 +475,8 @@ httpServer.listen(PORT, "0.0.0.0", () => {
   }
   console.log("");
 });
+
+// Re-push state on an interval so the connect link/QR follows the laptop's
+// current network (e.g. after switching Wi-Fi or starting a hotspot) even with
+// the control panel already open. Cheap and idempotent.
+setInterval(broadcastState, 15000).unref();

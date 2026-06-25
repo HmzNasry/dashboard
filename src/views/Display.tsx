@@ -150,8 +150,16 @@ function TopBar({ title }: { title: string }) {
   }, []);
   return (
     <header className="flex items-center justify-between border-b border-neutral-300 pb-6">
-      <span className="text-3xl font-semibold tracking-tight">{title}</span>
-      <span className="text-4xl font-medium tabular-nums tracking-tight text-neutral-800">
+      <span className="font-display text-5xl tracking-tight">{title}</span>
+      <span className="font-display text-4xl tracking-tight text-neutral-700">
+        {now.toLocaleDateString([], {
+          weekday: "long",
+          month: "long",
+          day: "numeric",
+          year: "numeric",
+        })}
+      </span>
+      <span className="font-display text-5xl tabular-nums tracking-tight text-neutral-800">
         {now.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}
       </span>
     </header>
@@ -163,10 +171,10 @@ function NowHero({ state }: { state: ReturnType<typeof computeState> }) {
   const { current, next, progress } = state;
   const bodyCls =
     "text-balance text-[clamp(1.8rem,3.3vw,3.5rem)] font-semibold leading-tight tracking-tight";
-  const smallTitle = "text-2xl font-medium text-neutral-500";
+  const smallTitle = "text-2xl font-medium text-neutral-300";
 
   return (
-    <section className="flex min-h-0 flex-col overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-sm">
+    <section className="flex min-h-0 flex-col overflow-hidden rounded-3xl border-2 border-white/70 bg-neutral-900/55 text-neutral-100 shadow-[0_8px_28px_rgba(0,0,0,0.22)] backdrop-blur-lg">
       <div className="relative flex min-h-0 flex-1 flex-col">
         <AnimatePresence mode="wait">
           <motion.div
@@ -189,7 +197,7 @@ function NowHero({ state }: { state: ReturnType<typeof computeState> }) {
                   </p>
                 </div>
 
-                <div className="mx-10 h-px bg-neutral-200" />
+                <div className="mx-10 h-px bg-white/15" />
 
                 {/* Farsi — small title top-right, body is the main text */}
                 <div className="relative flex flex-1 flex-col items-center justify-center px-14 text-center">
@@ -213,15 +221,15 @@ function NowHero({ state }: { state: ReturnType<typeof computeState> }) {
       </div>
 
       {/* Up next */}
-      <div className="flex items-center justify-between gap-8 border-t border-neutral-200 px-12 py-7">
+      <div className="flex items-center justify-between gap-8 border-t border-white/15 px-12 py-7">
         <div className="min-w-0">
-          <div className="text-lg text-neutral-500">Up next</div>
+          <div className="text-lg text-neutral-400">Up next</div>
           {next ? (
             <>
               <div className="mt-2 text-4xl font-semibold tracking-tight">
                 {next.title.en}
               </div>
-              <div className="fa mt-1.5 text-3xl text-neutral-500">
+              <div className="fa mt-1.5 text-3xl text-neutral-300">
                 {next.title.fa}
               </div>
             </>
@@ -236,7 +244,7 @@ function NowHero({ state }: { state: ReturnType<typeof computeState> }) {
             <div className="text-4xl font-semibold tabular-nums tracking-tight">
               {formatTime12(next.time)}
             </div>
-            <div className="mt-1 text-lg tabular-nums text-neutral-500">
+            <div className="mt-1 text-lg tabular-nums text-neutral-300">
               <Countdown time={next.time} />
             </div>
           </div>
@@ -244,9 +252,9 @@ function NowHero({ state }: { state: ReturnType<typeof computeState> }) {
       </div>
 
       {current && next && (
-        <div className="h-1.5 w-full bg-neutral-200">
+        <div className="h-1.5 w-full bg-white/15">
           <motion.div
-            className="h-full bg-neutral-900"
+            className="h-full bg-neutral-100"
             animate={{ width: `${Math.round(progress * 100)}%` }}
             transition={{ duration: 1, ease: "linear" }}
           />
@@ -288,8 +296,8 @@ function Schedule({
   );
   const currentIdx = ordered.findIndex((e) => e.id === currentId);
   return (
-    <section className="flex min-h-0 flex-col overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-sm">
-      <div className="border-b border-neutral-200 px-8 py-6 text-2xl font-semibold tracking-tight">
+    <section className="flex min-h-0 flex-col overflow-hidden rounded-3xl border-2 border-white/70 bg-neutral-900/55 text-neutral-100 shadow-[0_8px_28px_rgba(0,0,0,0.22)] backdrop-blur-lg">
+      <div className="border-b border-white/15 px-8 py-6 font-display text-3xl tracking-tight">
         Schedule
       </div>
       <div className="flex min-h-0 flex-1 flex-col px-3 py-1">
@@ -304,13 +312,13 @@ function Schedule({
               transition={{ delay: i * 0.04, duration: 0.4 }}
               className={`flex min-h-0 flex-1 items-center gap-6 px-5 transition-colors ${
                 isLive
-                  ? "my-0.5 rounded-xl border-2 border-neutral-900 bg-neutral-100"
-                  : "border-b border-neutral-200/70 last:border-b-0"
+                  ? "my-0.5 rounded-xl border-2 border-white/70 bg-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.12)]"
+                  : "border-b border-white/10 last:border-b-0"
               }`}
             >
               <span
                 className={`w-24 shrink-0 whitespace-nowrap tabular-nums text-lg ${
-                  isLive ? "text-neutral-700" : "text-neutral-500"
+                  isLive ? "text-neutral-100" : "text-neutral-400"
                 }`}
               >
                 {formatTime12(e.time)}
@@ -318,14 +326,14 @@ function Schedule({
               <div className="min-w-0 flex-1">
                 <div
                   className={`truncate text-[1.55rem] font-medium leading-tight tracking-tight ${
-                    isLive ? "text-neutral-900" : "text-neutral-700"
+                    isLive ? "text-white" : "text-neutral-200"
                   }`}
                 >
                   {e.title.en}
                 </div>
                 <div
                   className={`fa mt-0.5 truncate text-[1.7rem] leading-tight ${
-                    isLive ? "text-neutral-600" : "text-neutral-500"
+                    isLive ? "text-neutral-200" : "text-neutral-400"
                   }`}
                 >
                   {e.title.fa}
