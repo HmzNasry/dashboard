@@ -69,6 +69,7 @@ export function Control({
   });
   const [eventEdit, setEventEdit] = useState<EventItem | "new" | null>(null);
   const [annEdit, setAnnEdit] = useState<Announcement | "new" | null>(null);
+  const [videoOn, setVideoOn] = useState(false);
   const [, tick] = useState(0);
 
   useEffect(() => () => client.close(), [client]);
@@ -142,6 +143,11 @@ export function Control({
     client.send({ type: "stop" });
   };
 
+  const toggleVideo = (on: boolean) => {
+    setVideoOn(on);
+    client.send({ type: "video", payload: { on } });
+  };
+
   // ---- Editing schedule + announcements ----------------------------------
   const events = data.schedule.events;
   const announcements = data.announcements;
@@ -199,7 +205,13 @@ export function Control({
       <TopBar connected={net.connected} />
 
       <main className="mx-auto max-w-6xl px-6 py-8">
-        <StatusHero live={live} pinned={!!pinned} onClear={stop} />
+        <StatusHero
+          live={live}
+          pinned={!!pinned}
+          onClear={stop}
+          videoOn={videoOn}
+          onToggleVideo={toggleVideo}
+        />
 
         <div className="mt-10 grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]">
           <ScheduleColumn
@@ -577,10 +589,14 @@ function StatusHero({
   live,
   pinned,
   onClear,
+  videoOn,
+  onToggleVideo,
 }: {
   live: ReturnType<typeof computeState>;
   pinned: boolean;
   onClear: () => void;
+  videoOn: boolean;
+  onToggleVideo: (on: boolean) => void;
 }) {
   return (
     <section className="overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-900/40">
@@ -615,7 +631,10 @@ function StatusHero({
           </AnimatePresence>
         </div>
 
-        <ClearButton onClear={onClear} />
+        <div className="flex shrink-0 items-center gap-5">
+          <Switch on={videoOn} onChange={onToggleVideo} label="Video" />
+          <ClearButton onClear={onClear} />
+        </div>
       </div>
 
       {/* Up next strip */}
@@ -1025,6 +1044,39 @@ function Pulse() {
       <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
       <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
     </span>
+  );
+}
+
+function Switch({
+  on,
+  onChange,
+  label,
+}: {
+  on: boolean;
+  onChange: (v: boolean) => void;
+  label: string;
+}) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={on}
+      onClick={() => onChange(!on)}
+      className="flex items-center gap-2.5 text-sm text-neutral-300"
+    >
+      <span
+        className={`relative h-6 w-11 shrink-0 rounded-full border transition-colors ${
+          on ? "border-white bg-white" : "border-neutral-600 bg-neutral-800"
+        }`}
+      >
+        <span
+          className={`absolute top-1/2 h-4 w-4 -translate-y-1/2 rounded-full transition-all ${
+            on ? "left-[22px] bg-black" : "left-1 bg-neutral-400"
+          }`}
+        />
+      </span>
+      {label}
+    </button>
   );
 }
 

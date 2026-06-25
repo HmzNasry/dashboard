@@ -72,4 +72,6 @@ export type BusMessage =
   | { type: "setCurrent"; payload: { eventId: string | null } }
   /** Schedule/announcements were edited — refetch content. */
   | { type: "reload" }
+  /** Show/hide the full-screen looping video on the TV. */
+  | { type: "video"; payload: { on: boolean } }
   | { type: "ping" };

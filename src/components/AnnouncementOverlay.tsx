@@ -4,20 +4,25 @@ import type { BusMessage, Bilingual } from "../types";
 import { playChime } from "../lib/chime";
 import { playQueue } from "../lib/player";
 
-interface Active {
+interface Entry {
   text: Bilingual;
+  id: number;
+  settled: boolean;
 }
 
-const INTRO_MS = 2600; // how long the big red↔white "ANNOUNCEMENT" pulses
+const INTRO_MS = 2600; // big red↔white "ANNOUNCEMENT" pulse before it settles
+const SPEAK_DELAY = 300; // extra beat after settle before the message is read
 const CALM_RED = "#cf5b54";
 
 const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 /**
- * Announcement takeover. Two phases:
+ * Announcement takeover. Two phases per announcement:
  *   1. intro  — a big "ANNOUNCEMENT" pulses calm red ↔ white,
- *   2. settled — it shrinks/rises to its banner spot, the red pulse stops, the
- *      horizontal-spiral roll begins, and the EN/FA text slides in.
+ *   2. settled — it shrinks/rises to its banner spot, the spiral roll begins,
+ *      and the EN/FA text appears. The spoken audio waits for the settle.
+ * Each announcement is keyed, so firing a new one while one is up cleanly
+ * cross-fades instead of snapping.
  */
 export function AnnouncementOverlay({
   subscribe,
@@ -26,16 +31,14 @@ export function AnnouncementOverlay({
   subscribe: (h: (m: BusMessage) => void) => () => void;
   onEnded: () => void;
 }) {
-  const [active, setActive] = useState<Active | null>(null);
-  const [settled, setSettled] = useState(false);
+  const [entry, setEntry] = useState<Entry | null>(null);
   const cancelRef = useRef<(() => void) | null>(null);
   const settleTimer = useRef<number | undefined>(undefined);
   const runRef = useRef(0);
 
   useEffect(() => {
-    const hide = () => {
-      setActive(null);
-      setSettled(false);
+    const finish = () => {
+      setEntry(null);
       onEnded();
     };
 
@@ -44,23 +47,29 @@ export function AnnouncementOverlay({
         runRef.current++;
         window.clearTimeout(settleTimer.current);
         cancelRef.current?.();
-        hide();
+        finish();
         return;
       }
       if (msg.type !== "announce") return;
 
-      const myRun = ++runRef.current;
+      const my = ++runRef.current;
       window.clearTimeout(settleTimer.current);
-      cancelRef.current?.();
-      setActive({ text: msg.payload.text });
-      setSettled(false);
+      cancelRef.current?.(); // stop any audio still playing from a prior one
+      setEntry({ text: msg.payload.text, id: my, settled: false });
       settleTimer.current = window.setTimeout(() => {
-        if (runRef.current === myRun) setSettled(true);
+        setEntry((e) => (e && e.id === my ? { ...e, settled: true } : e));
       }, INTRO_MS);
 
       const t0 = performance.now();
       if (msg.payload.chime) await playChime();
-      if (runRef.current !== myRun) return;
+      if (runRef.current !== my) return;
+
+      // Hold the spoken message until the intro animation has settled.
+      const waited = performance.now() - t0;
+      if (waited < INTRO_MS + SPEAK_DELAY) {
+        await wait(INTRO_MS + SPEAK_DELAY - waited);
+      }
+      if (runRef.current !== my) return;
 
       const urls = msg.payload.order
         .map((l) => msg.payload.audio?.[l])
@@ -74,9 +83,8 @@ export function AnnouncementOverlay({
         await done;
         playedReal = performance.now() - a0 > 1200;
       }
-      if (runRef.current !== myRun) return;
+      if (runRef.current !== my) return;
 
-      // How long to stay up: explicit hold (e.g. 5 min), else audio-based.
       const { holdMs } = msg.payload;
       const remaining =
         holdMs != null
@@ -84,18 +92,20 @@ export function AnnouncementOverlay({
           : playedReal
             ? 1500
             : 7000;
-
       await wait(remaining);
-      if (runRef.current !== myRun) return;
-      hide();
+      if (runRef.current !== my) return;
+      finish();
     });
     return unsub;
   }, [subscribe, onEnded]);
 
+  const settled = entry?.settled ?? false;
+
   return (
     <AnimatePresence>
-      {active && (
+      {entry && (
         <motion.div
+          key="backdrop"
           className="absolute inset-0 z-50 flex items-center justify-center"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -104,67 +114,71 @@ export function AnnouncementOverlay({
           style={{ background: "rgba(12,12,12,0.95)", backdropFilter: "blur(12px)" }}
         >
           <div className="safe relative flex h-full w-full flex-col items-center justify-center text-center">
-            {/* Banner — animates from big centered to small top spot */}
-            <motion.div
-              layout="position"
-              className="flex items-center justify-center gap-6"
-            >
-              <motion.span
-                className="h-px w-16 origin-right bg-neutral-600"
-                animate={{ opacity: settled ? 1 : 0, scaleX: settled ? 1 : 0 }}
-                transition={{ duration: 0.5 }}
-              />
+            <AnimatePresence mode="wait">
               <motion.div
-                animate={{ scale: settled ? 1 : 2.6 }}
-                transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
-                className="origin-center"
+                key={entry.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                className="flex w-full flex-col items-center"
               >
-                <motion.div
-                  animate={
-                    settled
-                      ? { color: "#ededed" }
-                      : { color: [CALM_RED, "#ffffff", CALM_RED] }
-                  }
-                  transition={
-                    settled
-                      ? { duration: 0.5 }
-                      : { duration: 1.3, repeat: Infinity, ease: "easeInOut" }
-                  }
-                >
-                  <RollText
-                    text="ANNOUNCEMENT"
-                    loop={settled}
-                    className="font-serif text-[2rem] font-semibold tracking-[0.32em]"
+                {/* Banner */}
+                <div className="flex items-center justify-center gap-6">
+                  <motion.span
+                    className="h-px w-16 origin-right bg-neutral-600"
+                    animate={{ opacity: settled ? 1 : 0, scaleX: settled ? 1 : 0 }}
+                    transition={{ duration: 0.5 }}
                   />
-                </motion.div>
-              </motion.div>
-              <motion.span
-                className="h-px w-16 origin-left bg-neutral-600"
-                animate={{ opacity: settled ? 1 : 0, scaleX: settled ? 1 : 0 }}
-                transition={{ duration: 0.5 }}
-              />
-            </motion.div>
+                  <motion.div
+                    animate={{ scale: settled ? 1 : 2.6 }}
+                    transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
+                    className="origin-center"
+                  >
+                    <motion.div
+                      animate={
+                        settled
+                          ? { color: "#ededed" }
+                          : { color: [CALM_RED, "#ffffff", CALM_RED] }
+                      }
+                      transition={
+                        settled
+                          ? { duration: 0.5 }
+                          : { duration: 1.3, repeat: Infinity, ease: "easeInOut" }
+                      }
+                    >
+                      <RollText
+                        text="ANNOUNCEMENT"
+                        loop={settled}
+                        className="font-serif text-[2rem] font-semibold tracking-[0.32em]"
+                      />
+                    </motion.div>
+                  </motion.div>
+                  <motion.span
+                    className="h-px w-16 origin-left bg-neutral-600"
+                    animate={{ opacity: settled ? 1 : 0, scaleX: settled ? 1 : 0 }}
+                    transition={{ duration: 0.5 }}
+                  />
+                </div>
 
-            {/* Body — EN on top, FA on bottom, same size, warm-white shine */}
-            <AnimatePresence>
-              {settled && (
-                <motion.div
-                  key="body"
-                  initial={{ opacity: 0, y: 28 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-                  className="mt-12 flex w-full max-w-[86%] flex-col items-center"
-                >
-                  <p className="shine-text text-balance text-[clamp(2.25rem,4vw,4rem)] font-semibold leading-tight tracking-tight">
-                    {active.text.en}
-                  </p>
-                  <div className="my-7 h-px w-28 bg-[rgba(255,240,210,0.35)] shadow-[0_0_10px_rgba(255,235,200,0.3)]" />
-                  <p className="fa shine-text text-balance text-[clamp(2.25rem,4vw,4rem)] font-semibold leading-snug tracking-tight">
-                    {active.text.fa}
-                  </p>
-                </motion.div>
-              )}
+                {/* Body — EN on top, FA on bottom, warm-white shine */}
+                {settled && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 28 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+                    className="mt-12 flex w-full max-w-[86%] flex-col items-center"
+                  >
+                    <p className="shine-text text-balance text-[clamp(2.25rem,4vw,4rem)] font-semibold leading-tight tracking-tight">
+                      {entry.text.en}
+                    </p>
+                    <div className="my-7 h-px w-28 bg-[rgba(255,240,210,0.35)] shadow-[0_0_10px_rgba(255,235,200,0.3)]" />
+                    <p className="fa shine-text text-balance text-[clamp(2.25rem,4vw,4rem)] font-semibold leading-snug tracking-tight">
+                      {entry.text.fa}
+                    </p>
+                  </motion.div>
+                )}
+              </motion.div>
             </AnimatePresence>
           </div>
         </motion.div>
@@ -174,8 +188,7 @@ export function AnnouncementOverlay({
 }
 
 // Looping character roll ("horizontal spiral") — two stacked copies per glyph;
-// CSS animates the flip with a per-character stagger when `loop` is on. Colour
-// is inherited so the parent can pulse it.
+// CSS animates the flip with a per-character stagger when `loop` is on.
 function RollText({
   text,
   loop,

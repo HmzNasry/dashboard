@@ -21,6 +21,7 @@ export function Display({
   const client = clientRef.current;
   const [manualId, setManualId] = useState<string | null>(null);
   const [armed, setArmed] = useState(false);
+  const [videoOn, setVideoOn] = useState(false);
   const [, tick] = useState(0);
 
   useEffect(() => () => client.close(), [client]);
@@ -51,6 +52,7 @@ export function Display({
     const off = client.onBus((m: BusMessage) => {
       if (m.type === "setCurrent") setManualId(m.payload.eventId);
       else if (m.type === "reload") reload();
+      else if (m.type === "video") setVideoOn(m.payload.on);
     });
     return off;
   }, [client, reload]);
@@ -91,11 +93,51 @@ export function Display({
         </div>
       </div>
 
+      <VideoOverlay show={videoOn} />
+
       <AnnouncementOverlay
         subscribe={subscribe}
         onEnded={() => client.send({ type: "announceEnded" })}
       />
     </div>
+  );
+}
+
+// Full-screen looping video that fades in/out, toggled from the control panel.
+function VideoOverlay({ show }: { show: boolean }) {
+  const ref = useRef<HTMLVideoElement>(null);
+  useEffect(() => {
+    const v = ref.current;
+    if (show && v) {
+      v.currentTime = 0;
+      // Try with sound; if the browser blocks autoplay, fall back to muted.
+      v.play().catch(() => {
+        v.muted = true;
+        v.play().catch(() => {});
+      });
+    }
+  }, [show]);
+  return (
+    <AnimatePresence>
+      {show && (
+        <motion.div
+          className="absolute inset-0 z-40 bg-black"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.8, ease: "easeInOut" }}
+        >
+          <video
+            ref={ref}
+            src="/video.mp4"
+            autoPlay
+            loop
+            playsInline
+            className="h-full w-full object-cover"
+          />
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }
 
