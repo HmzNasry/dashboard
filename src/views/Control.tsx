@@ -152,18 +152,44 @@ export function Control({
   const events = data.schedule.events;
   const announcements = data.announcements;
 
-  const persistSchedule = async (newEvents: EventItem[]) => {
-    const sorted = [...newEvents].sort(
-      (a, b) => toMinutes(a.time) - toMinutes(b.time),
-    );
-    await saveSchedule({ ...data.schedule, events: sorted });
+  // Linked broadcasts: an event's `broadcastId` points at an announcement.
+  // Those announcements are shown under their event instead of in the library.
+  const linkedIds = new Set(
+    events.map((e) => e.broadcastId).filter(Boolean) as string[],
+  );
+  const libraryAnnouncements = announcements.filter((a) => !linkedIds.has(a.id));
+  const broadcastFor = (e: EventItem) =>
+    e.broadcastId ? announcements.find((a) => a.id === e.broadcastId) : undefined;
+
+  const byTime = (list: EventItem[]) =>
+    [...list].sort((a, b) => toMinutes(a.time) - toMinutes(b.time));
+  // Keep links 1:1 — a broadcast belongs to at most one event.
+  const applyLink = (
+    list: EventItem[],
+    broadcastId: string,
+    eventId: string | null,
+  ) =>
+    list.map((e) => {
+      if (e.id === eventId) return { ...e, broadcastId };
+      if (e.broadcastId === broadcastId && e.id !== eventId)
+        return { ...e, broadcastId: undefined };
+      return e;
+    });
+
+  const refresh = () => {
     reload();
     client.send({ type: "reload" });
   };
+
+  const persistSchedule = async (newEvents: EventItem[]) => {
+    await saveSchedule({ ...data.schedule, events: byTime(newEvents) });
+    refresh();
+  };
   const upsertEvent = (ev: EventItem) => {
-    const list = events.some((e) => e.id === ev.id)
+    let list = events.some((e) => e.id === ev.id)
       ? events.map((e) => (e.id === ev.id ? ev : e))
       : [...events, ev];
+    if (ev.broadcastId) list = applyLink(list, ev.broadcastId, ev.id);
     persistSchedule(list);
     setEventEdit(null);
   };
@@ -173,22 +199,39 @@ export function Control({
     }
   };
 
-  const persistAnns = async (list: Announcement[]) => {
-    await saveAnnouncements(list);
-    reload();
-    client.send({ type: "reload" });
-  };
-  const upsertAnn = (a: Announcement) => {
+  const upsertAnn = async (a: Announcement, linkEventId: string | null) => {
     const list = announcements.some((x) => x.id === a.id)
       ? announcements.map((x) => (x.id === a.id ? a : x))
       : [...announcements, a];
-    persistAnns(list);
+    await saveAnnouncements(list);
+    const newEvents = applyLink(events, a.id, linkEventId);
+    if (JSON.stringify(newEvents) !== JSON.stringify(events)) {
+      await saveSchedule({ ...data.schedule, events: byTime(newEvents) });
+    }
+    refresh();
     setAnnEdit(null);
   };
-  const deleteAnn = (a: Announcement) => {
-    if (window.confirm(`Delete “${a.label}”?`)) {
-      persistAnns(announcements.filter((x) => x.id !== a.id));
+  const deleteAnn = async (a: Announcement) => {
+    if (!window.confirm(`Delete “${a.label}”?`)) return;
+    await saveAnnouncements(announcements.filter((x) => x.id !== a.id));
+    if (linkedIds.has(a.id)) {
+      await saveSchedule({
+        ...data.schedule,
+        events: byTime(applyLink(events, a.id, null)),
+      });
     }
+    refresh();
+  };
+
+  // Activate an event: fire its linked broadcast (if any), then put it on screen.
+  const pickEvent = (e: EventItem) => {
+    if (pinned === e.id) {
+      setCurrent(null);
+      return;
+    }
+    const linked = broadcastFor(e);
+    if (linked) broadcast(linked);
+    setCurrent(e.id);
   };
 
   // This device was removed by the admin — gone until the link is opened again.
@@ -227,13 +270,15 @@ export function Control({
             currentId={live.current?.id ?? null}
             pinned={pinned}
             onPick={setCurrent}
+            onActivate={pickEvent}
+            broadcastFor={broadcastFor}
             onAdd={() => setEventEdit("new")}
             onEdit={setEventEdit}
             onDelete={deleteEvent}
           />
           <div className="space-y-10">
             <AnnouncementsColumn
-              announcements={data.announcements}
+              announcements={libraryAnnouncements}
               order={order}
               setOrder={setOrder}
               chime={chime}
@@ -269,6 +314,7 @@ export function Control({
         {eventEdit && (
           <EventEditor
             initial={eventEdit === "new" ? null : eventEdit}
+            announcements={announcements}
             onSave={upsertEvent}
             onCancel={() => setEventEdit(null)}
           />
@@ -276,6 +322,7 @@ export function Control({
         {annEdit && (
           <AnnouncementEditor
             initial={annEdit === "new" ? null : annEdit}
+            events={events}
             onSave={upsertAnn}
             onCancel={() => setAnnEdit(null)}
           />
@@ -687,6 +734,8 @@ function ScheduleColumn({
   currentId,
   pinned,
   onPick,
+  onActivate,
+  broadcastFor,
   onAdd,
   onEdit,
   onDelete,
@@ -695,6 +744,8 @@ function ScheduleColumn({
   currentId: string | null;
   pinned: string | null;
   onPick: (id: string | null) => void;
+  onActivate: (e: EventItem) => void;
+  broadcastFor: (e: EventItem) => Announcement | undefined;
   onAdd: () => void;
   onEdit: (e: EventItem) => void;
   onDelete: (e: EventItem) => void;
@@ -726,47 +777,82 @@ function ScheduleColumn({
         {[...events]
           .sort((a, b) => toMinutes(a.time) - toMinutes(b.time))
           .map((e, i) => {
-          const isLive = currentId === e.id;
-          const isPinned = pinned === e.id;
-          return (
-            <motion.div
-              key={e.id}
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.025 }}
-              className={`group flex items-center gap-3 rounded-xl border px-4 py-3.5 transition-colors duration-300 ${
-                isLive
-                  ? "border-emerald-500 bg-neutral-800/60"
-                  : "border-neutral-800 bg-neutral-900/40 hover:border-neutral-600"
-              }`}
-            >
-              <button
-                onClick={() => onPick(isPinned ? null : e.id)}
-                className="flex min-w-0 flex-1 items-center gap-4 text-left"
-                title={isPinned ? "Release to clock" : "Set live"}
+            const isLive = currentId === e.id;
+            const isPinned = pinned === e.id;
+            const linked = broadcastFor(e);
+            return (
+              <motion.div
+                key={e.id}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.025 }}
+                className="relative"
               >
-                <span className="w-12 shrink-0 tabular-nums text-sm text-neutral-400">
-                  {e.time}
-                </span>
-                <span className="min-w-0 flex-1">
-                  <span className="block truncate font-medium tracking-tight">
-                    {e.title.en}
-                  </span>
-                  <span className="fa block truncate text-sm text-neutral-400">
-                    {e.title.fa}
-                  </span>
-                </span>
-              </button>
+                <div
+                  className={`group relative z-10 flex items-center gap-3 rounded-xl border px-4 py-3.5 transition-colors duration-300 ${
+                    isLive
+                      ? "border-emerald-500 bg-neutral-800/80"
+                      : "border-neutral-800 bg-neutral-900/60 hover:border-neutral-600"
+                  }`}
+                >
+                  <button
+                    onClick={() => onActivate(e)}
+                    className="flex min-w-0 flex-1 items-center gap-4 text-left"
+                    title={isPinned ? "Release to clock" : "Set live"}
+                  >
+                    <span className="w-12 shrink-0 tabular-nums text-sm text-neutral-400">
+                      {e.time}
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate font-medium tracking-tight">
+                        {e.title.en}
+                      </span>
+                      <span className="fa block truncate text-sm text-neutral-400">
+                        {e.title.fa}
+                      </span>
+                    </span>
+                  </button>
 
-              <IconButton label="Edit event" onClick={() => onEdit(e)}>
-                <PencilIcon />
-              </IconButton>
-              <IconButton label="Delete event" danger onClick={() => onDelete(e)}>
-                <TrashIcon />
-              </IconButton>
-            </motion.div>
-          );
-        })}
+                  <IconButton label="Edit event" onClick={() => onEdit(e)}>
+                    <PencilIcon />
+                  </IconButton>
+                  <IconButton
+                    label="Delete event"
+                    danger
+                    onClick={() => onDelete(e)}
+                  >
+                    <TrashIcon />
+                  </IconButton>
+                </div>
+
+                {/* Linked broadcast — peeks out from under the event card */}
+                {linked && (
+                  <div className="relative z-0 mx-5 -mt-2 flex items-center gap-2 rounded-b-2xl border border-t-0 border-neutral-800 bg-neutral-900/80 px-4 pb-2.5 pt-4">
+                    <svg
+                      width="13"
+                      height="13"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="shrink-0 text-neutral-500"
+                    >
+                      <path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+                      <path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+                    </svg>
+                    <span className="text-[11px] uppercase tracking-[0.14em] text-neutral-500">
+                      Linked broadcast
+                    </span>
+                    <span className="ml-1 min-w-0 flex-1 truncate text-sm text-neutral-300">
+                      {linked.label}
+                    </span>
+                  </div>
+                )}
+              </motion.div>
+            );
+          })}
       </div>
     </section>
   );
@@ -1321,10 +1407,12 @@ function EditorActions({
 
 function EventEditor({
   initial,
+  announcements,
   onSave,
   onCancel,
 }: {
   initial: EventItem | null;
+  announcements: Announcement[];
   onSave: (e: EventItem) => void;
   onCancel: () => void;
 }) {
@@ -1333,6 +1421,7 @@ function EventEditor({
   const [titleFa, setTitleFa] = useState(initial?.title.fa ?? "");
   const [bodyEn, setBodyEn] = useState(initial?.body?.en ?? "");
   const [bodyFa, setBodyFa] = useState(initial?.body?.fa ?? "");
+  const [broadcastId, setBroadcastId] = useState(initial?.broadcastId ?? "");
   const canSave = !!time && !!(titleEn.trim() || titleFa.trim());
 
   const save = () => {
@@ -1342,6 +1431,7 @@ function EventEditor({
       time,
       title: { en: titleEn.trim(), fa: titleFa.trim() },
       ...(hasBody ? { body: { en: bodyEn.trim(), fa: bodyFa.trim() } } : {}),
+      ...(broadcastId ? { broadcastId } : {}),
     });
   };
 
@@ -1392,6 +1482,20 @@ function EventEditor({
             className={`fa resize-none ${inputCls}`}
           />
         </Field>
+        <Field label="Linked broadcast (fired when this event goes live)">
+          <select
+            value={broadcastId}
+            onChange={(e) => setBroadcastId(e.target.value)}
+            className={inputCls}
+          >
+            <option value="">None</option>
+            {announcements.map((a) => (
+              <option key={a.id} value={a.id}>
+                {a.label}
+              </option>
+            ))}
+          </select>
+        </Field>
         <EditorActions onCancel={onCancel} onSave={save} canSave={canSave} />
       </div>
     </Modal>
@@ -1400,26 +1504,34 @@ function EventEditor({
 
 function AnnouncementEditor({
   initial,
+  events,
   onSave,
   onCancel,
 }: {
   initial: Announcement | null;
-  onSave: (a: Announcement) => void;
+  events: EventItem[];
+  onSave: (a: Announcement, linkEventId: string | null) => void;
   onCancel: () => void;
 }) {
   const [label, setLabel] = useState(initial?.label ?? "");
   const [textEn, setTextEn] = useState(initial?.text.en ?? "");
   const [textFa, setTextFa] = useState(initial?.text.fa ?? "");
+  const [linkEventId, setLinkEventId] = useState(
+    initial ? (events.find((e) => e.broadcastId === initial.id)?.id ?? "") : "",
+  );
   const canSave = !!label.trim() && !!(textEn.trim() || textFa.trim());
 
   const save = () =>
-    onSave({
-      id: initial?.id ?? `a${Date.now()}`,
-      label: label.trim(),
-      chime: initial?.chime ?? true,
-      text: { en: textEn.trim(), fa: textFa.trim() },
-      ...(initial?.audio ? { audio: initial.audio } : {}),
-    });
+    onSave(
+      {
+        id: initial?.id ?? `a${Date.now()}`,
+        label: label.trim(),
+        chime: initial?.chime ?? true,
+        text: { en: textEn.trim(), fa: textFa.trim() },
+        ...(initial?.audio ? { audio: initial.audio } : {}),
+      },
+      linkEventId || null,
+    );
 
   return (
     <Modal
@@ -1451,6 +1563,20 @@ function AnnouncementEditor({
             onChange={(e) => setTextFa(e.target.value)}
             className={`fa resize-none ${inputCls}`}
           />
+        </Field>
+        <Field label="Link to event (fires when that event goes live)">
+          <select
+            value={linkEventId}
+            onChange={(e) => setLinkEventId(e.target.value)}
+            className={inputCls}
+          >
+            <option value="">None (separate broadcast)</option>
+            {events.map((ev) => (
+              <option key={ev.id} value={ev.id}>
+                {ev.time} · {ev.title.en}
+              </option>
+            ))}
+          </select>
         </Field>
         <EditorActions onCancel={onCancel} onSave={save} canSave={canSave} />
       </div>

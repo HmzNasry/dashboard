@@ -109,26 +109,121 @@ app.get("/api/tts/health", (_req, res) => {
   res.json({ ready, detail });
 });
 
+// ---- Gemini TTS (online, high quality) -----------------------------------
+const GEMINI_MODELS = [
+  process.env.GEMINI_TTS_MODEL || "gemini-3.1-flash-tts-preview",
+  "gemini-2.5-flash-preview-tts",
+].filter((m, i, a) => a.indexOf(m) === i);
+const GEMINI_VOICE = process.env.GEMINI_VOICE || "Achernar"; // soft female
+
+function geminiKeys() {
+  let raw = process.env.GEMINI_API_KEY || "";
+  if (!raw) {
+    try {
+      raw = fs.readFileSync(path.join(ROOT, ".gemini.key"), "utf8");
+    } catch {
+      raw = "";
+    }
+  }
+  return raw.split(/[\n,]+/).map((s) => s.trim()).filter(Boolean);
+}
+
+function pcmToWav(pcm, sampleRate) {
+  const h = Buffer.alloc(44);
+  h.write("RIFF", 0);
+  h.writeUInt32LE(36 + pcm.length, 4);
+  h.write("WAVE", 8);
+  h.write("fmt ", 12);
+  h.writeUInt32LE(16, 16);
+  h.writeUInt16LE(1, 20);
+  h.writeUInt16LE(1, 22);
+  h.writeUInt32LE(sampleRate, 24);
+  h.writeUInt32LE(sampleRate * 2, 28);
+  h.writeUInt16LE(2, 32);
+  h.writeUInt16LE(16, 34);
+  h.write("data", 36);
+  h.writeUInt32LE(pcm.length, 40);
+  return Buffer.concat([h, pcm]);
+}
+
+async function geminiTts(text) {
+  const keys = geminiKeys();
+  if (!keys.length) throw new Error("no Gemini key");
+  let lastErr;
+  for (const key of keys) {
+    for (const model of GEMINI_MODELS) {
+      try {
+        const r = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text }] }],
+              generationConfig: {
+                responseModalities: ["AUDIO"],
+                speechConfig: {
+                  voiceConfig: { prebuiltVoiceConfig: { voiceName: GEMINI_VOICE } },
+                },
+              },
+            }),
+          },
+        );
+        if (!r.ok) {
+          lastErr = new Error(`${model} HTTP ${r.status}`);
+          continue;
+        }
+        const json = await r.json();
+        const part = json?.candidates?.[0]?.content?.parts?.find((p) => p.inlineData);
+        if (!part) {
+          lastErr = new Error("no audio in response");
+          continue;
+        }
+        const rate = Number(
+          (part.inlineData.mimeType || "").match(/rate=(\d+)/)?.[1] || 24000,
+        );
+        return pcmToWav(Buffer.from(part.inlineData.data, "base64"), rate);
+      } catch (e) {
+        lastErr = e;
+      }
+    }
+  }
+  throw lastErr || new Error("Gemini failed");
+}
+
+// On-demand TTS: try Gemini first (online), fall back to Piper (offline).
 app.post("/api/tts", async (req, res) => {
   const { text, lang } = req.body || {};
   if (!text || !lang) return res.status(400).json({ error: "text and lang required" });
-  const cfg = loadTtsConfig();
-  const model = voicePath(cfg.voices?.[lang]);
-  if (!model || !fs.existsSync(model)) {
-    return res.status(503).json({
-      error: `no Piper voice configured for "${lang}" (see tts.config.json)`,
-    });
-  }
+
   const hash = createHash("sha1").update(`${lang}:${text}`).digest("hex").slice(0, 16);
   const fileName = `${lang}-${hash}.wav`;
   const outPath = path.join(GEN_DIR, fileName);
   const url = `/audio/generated/${fileName}`;
   if (fs.existsSync(outPath)) return res.json({ ok: true, url });
+
+  // 1) Gemini
   try {
-    await runPiper(resolvePiper(cfg.piperPath), model, text, outPath);
-    res.json({ ok: true, url });
-  } catch (e) {
-    res.status(500).json({ error: `Piper failed: ${String(e)}` });
+    const wav = await geminiTts(text);
+    fs.writeFileSync(outPath, wav);
+    return res.json({ ok: true, url, engine: "gemini" });
+  } catch (geminiErr) {
+    // 2) Piper fallback
+    const cfg = loadTtsConfig();
+    const model = voicePath(cfg.voices?.[lang]);
+    if (model && fs.existsSync(model)) {
+      try {
+        await runPiper(resolvePiper(cfg.piperPath), model, text, outPath);
+        return res.json({ ok: true, url, engine: "piper" });
+      } catch (piperErr) {
+        return res.status(500).json({
+          error: `Gemini failed (${geminiErr.message}); Piper failed (${String(piperErr)})`,
+        });
+      }
+    }
+    return res.status(503).json({
+      error: `Gemini failed (${geminiErr.message}); no Piper voice for "${lang}"`,
+    });
   }
 });
 

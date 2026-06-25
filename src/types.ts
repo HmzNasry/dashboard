@@ -14,6 +14,8 @@ export interface EventItem {
   title: Bilingual;
   /** Main descriptive text (the big text shown in the "Now" box). */
   body?: Bilingual;
+  /** Announcement id to fire when this segment is set live (a linked broadcast). */
+  broadcastId?: string;
 }
 
 export interface ScheduleData {
