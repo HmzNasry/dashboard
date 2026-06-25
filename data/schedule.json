@@ -11,81 +11,81 @@
       }
     },
     {
-      "id": "quran",
+      "id": "couple-entrance",
       "time": "18:45",
-      "title": { "en": "Qur’an Recitation & Opening Du’a", "fa": "تلاوت آیاتی از کلام‌الله مجید" },
-      "body": {
-        "en": "“And among His signs is that He created for you spouses from among yourselves that you may find tranquility in them; and He placed between you affection and mercy.” (Qur’an 30:21)",
-        "fa": "﴿وَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُمْ مِنْ أَنْفُسِكُمْ أَزْوَاجًا لِّتَسْكُنُوا إِلَيْهَا وَجَعَلَ بَيْنَكُم مَّوَدَّةً وَرَحْمَةً﴾"
-      }
-    },
-    {
-      "id": "entrance",
-      "time": "19:00",
-      "title": { "en": "Bride & Groom Entrance", "fa": "ورود عروس و داماد" },
+      "title": { "en": "Arrival of the Bride & Groom", "fa": "ورود عروس و داماد" },
       "body": {
         "en": "Please join us in welcoming the newlyweds.",
         "fa": "از مهمانان گرامی تقاضا می‌شود برای استقبال از عروس و داماد آماده باشند"
       }
     },
     {
-      "id": "green-shaal",
-      "time": "19:30",
-      "title": { "en": "Green Shaal Ceremony", "fa": "مراسم شال سبز" },
+      "id": "quran",
+      "time": "19:00",
+      "title": { "en": "Holy Qur’an Recitation", "fa": "تلاوت آیاتی از کلام‌الله مجید" },
       "body": {
-        "en": "A special family tradition honoring the bride and groom.",
-        "fa": "سنتی خانوادگی و ویژه برای گرامیداشت عروس و داماد."
+        "en": "“And among His signs is that He created for you spouses from among yourselves that you may find tranquility in them; and He placed between you affection and mercy.” (Qur’an 30:21)",
+        "fa": "﴿وَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُمْ مِنْ أَنْفُسِكُمْ أَزْوَاجًا لِّتَسْكُنُوا إِلَيْهَا وَجَعَلَ بَيْنَكُم مَّوَدَّةً وَرَحْمَةً﴾"
+      }
+    },
+    {
+      "id": "opening",
+      "time": "19:05",
+      "title": { "en": "Opening Remarks", "fa": "آغاز رسمی محفل" },
+      "body": {
+        "en": "May this evening be filled with love, joy and Allah’s blessings.",
+        "fa": "امیدواریم این محفل با محبت، صمیمیت و برکت الهی همراه باشد."
+      }
+    },
+    {
+      "id": "dua",
+      "time": "19:15",
+      "title": { "en": "Du’a for the Couple", "fa": "دعای خیر" },
+      "body": {
+        "en": "May Allah bless you both, shower His blessings upon you, and unite you in goodness.",
+        "fa": "بارك الله لكما وبارك عليكما وجمع بينكما في خير"
+      }
+    },
+    {
+      "id": "family-remarks",
+      "time": "19:30",
+      "title": { "en": "Remarks from the Family", "fa": "سخن خانواده‌ها" },
+      "body": {
+        "en": "The bride & groom’s family warmly welcomes all distinguished guests and sincerely thanks you for honoring this blessed occasion with your presence. Your prayers and good wishes are deeply appreciated.",
+        "fa": "خانوادهٔ عروس و داماد حضور گرم و صمیمانهٔ همه مهمانان گرامی را خیرمقدم گفته و از اینکه در این محفل تشریف آورده‌اید، صمیمانه سپاسگزاری می‌نمایند."
+      }
+    },
+    {
+      "id": "cake",
+      "time": "19:50",
+      "title": { "en": "Cake Cutting & Family Photos", "fa": "قطع و توزیع کیک و عکس یادگاری" },
+      "body": {
+        "en": "The couple cut the cake, followed by keepsake photographs.",
+        "fa": "مراسم قطع و توزیع کیک و گرفتن عکس‌های یادگاری."
       }
     },
     {
       "id": "dinner",
-      "time": "20:00",
-      "title": { "en": "Dinner Service", "fa": "صرف طعام" },
+      "time": "20:10",
+      "title": { "en": "Dinner", "fa": "صرف طعام" },
       "body": {
-        "en": "Guests are invited to enjoy dinner, refreshments, and fellowship with family and friends.",
-        "fa": "از مهمانان دعوت می‌شود از شام، پذیرایی و همنشینی با خانواده و دوستان لذت ببرند."
-      }
-    },
-    {
-      "id": "adhan",
-      "time": "21:15",
-      "title": { "en": "Adhan & Prayer Preparation", "fa": "اذان و آماده‌سازی برای نماز" },
-      "body": {
-        "en": "Guests are kindly invited to proceed for Isha prayer.",
-        "fa": "از مهمانان گرامی دعوت می‌شود برای ادای نماز عشاء تشریف ببرند"
+        "en": "Please enjoy your meal.",
+        "fa": "نوش جان؛ از صرف غذا لذت ببرید."
       }
     },
     {
       "id": "prayer",
-      "time": "21:16",
-      "title": { "en": "Congregational Prayer", "fa": "نماز جماعت" },
+      "time": "21:10",
+      "title": { "en": "Maghrib Prayer", "fa": "ادای نماز شام" },
       "body": {
-        "en": "Prayer break for guests.",
-        "fa": "زمان نماز برای مهمانان."
-      }
-    },
-    {
-      "id": "return",
-      "time": "21:40",
-      "title": { "en": "Bride & Groom Grand Return", "fa": "بازگشت باشکوه عروس و داماد" },
-      "body": {
-        "en": "The bride and groom return for the evening celebration.",
-        "fa": "عروس و داماد برای ادامه جشن شبانه بازمی‌گردند."
-      }
-    },
-    {
-      "id": "jewelry-cake",
-      "time": "21:45",
-      "title": { "en": "Jewelry Presentation & Cake Cutting", "fa": "اهدای جواهرات و بریدن کیک" },
-      "body": {
-        "en": "Family members present gifts and blessings to the bride, followed by the cake-cutting ceremony.",
-        "fa": "اعضای خانواده هدایا و دعای خیر خود را تقدیم عروس می‌کنند و سپس مراسم بریدن کیک برگزار می‌شود."
+        "en": "Guests are kindly invited to proceed for prayer.",
+        "fa": "از مهمانان گرامی دعوت می‌شود برای ادای نماز تشریف ببرند"
       }
     },
     {
       "id": "photos",
-      "time": "22:30",
-      "title": { "en": "Family Photos", "fa": "عکس‌های یادگاری" },
+      "time": "21:30",
+      "title": { "en": "Family Photo Session", "fa": "عکس‌های یادگاری" },
       "body": {
         "en": "To ensure everyone has an opportunity to take photos with the bride and groom, we kindly invite our guests to come to the stage in the following order.",
         "fa": "جهت نظم بهتر و استفاده مؤثر از وقت، از مهمانان گرامی تقاضا می‌شود به ترتیب ذیل برای گرفتن عکس‌های یادگاری با عروس و داماد تشریف بیاورند."
@@ -93,7 +93,7 @@
     },
     {
       "id": "farewell",
-      "time": "23:00",
+      "time": "22:55",
       "title": { "en": "Farewell & Closing", "fa": "بدرقه و سپاسگزاری" },
       "body": {
         "en": "Thank you for honoring us with your presence and heartfelt prayers. May Allah bless you and your families with health, happiness and endless blessings.",
