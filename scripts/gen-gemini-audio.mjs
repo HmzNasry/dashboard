@@ -25,14 +25,24 @@ const VOICE = process.env.GEMINI_VOICE || "Achernar"; // soft female; multilingu
 const FORCE = process.argv.includes("--force");
 const RATE_MS = 4500; // ~13 req/min, under the 15 RPM free-tier limit
 
-function apiKey() {
-  if (process.env.GEMINI_API_KEY) return process.env.GEMINI_API_KEY.trim();
-  try {
-    return fs.readFileSync(path.join(ROOT, ".gemini.key"), "utf8").trim();
-  } catch {
-    return null;
+// One or more API keys (env GEMINI_API_KEY comma-separated, or .gemini.key one
+// per line). The script rotates to the next key when a key's quota runs out.
+function keys() {
+  let raw = process.env.GEMINI_API_KEY || "";
+  if (!raw) {
+    try {
+      raw = fs.readFileSync(path.join(ROOT, ".gemini.key"), "utf8");
+    } catch {
+      raw = "";
+    }
   }
+  return raw
+    .split(/[\n,]+/)
+    .map((s) => s.trim())
+    .filter(Boolean);
 }
+
+const KEYS = keys();
 
 // Wrap raw PCM (signed 16-bit LE, mono) in a minimal WAV container.
 function pcmToWav(pcm, sampleRate) {
@@ -79,31 +89,37 @@ async function tts(key, text, model) {
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-// Try the current model; on a 429 (quota) advance to the next model and stay
-// there for the rest of the run. Throws when all models are exhausted.
+// On a 429 (quota) advance to the next model; when a key's models are all
+// exhausted, switch to the next key (and start again at the newest model).
+let keyIdx = 0;
 let modelIdx = 0;
-async function ttsAny(key, text) {
-  while (modelIdx < MODELS.length) {
-    try {
-      return await tts(key, text, MODELS[modelIdx]);
-    } catch (e) {
-      if (/HTTP 429/.test(e.message)) {
-        console.log(`(quota hit on ${MODELS[modelIdx]} → trying next model)`);
-        modelIdx++;
-        continue;
+async function ttsAny(text) {
+  while (keyIdx < KEYS.length) {
+    while (modelIdx < MODELS.length) {
+      try {
+        return await tts(KEYS[keyIdx], text, MODELS[modelIdx]);
+      } catch (e) {
+        if (/HTTP 429/.test(e.message)) {
+          console.log(`(quota: key #${keyIdx + 1} / ${MODELS[modelIdx]} → next)`);
+          modelIdx++;
+          continue;
+        }
+        throw e;
       }
-      throw e;
     }
+    keyIdx++;
+    modelIdx = 0;
+    if (keyIdx < KEYS.length) console.log(`→ switching to key #${keyIdx + 1}`);
   }
-  throw new Error("all model daily quotas exhausted — try again after reset");
+  throw new Error("all keys/models exhausted — try again after reset");
 }
 
 async function main() {
-  const key = apiKey();
-  if (!key) {
+  if (!KEYS.length) {
     console.error("No API key. Run: echo 'YOUR_KEY' > .gemini.key");
     process.exit(1);
   }
+  console.log(`${KEYS.length} key(s), models: ${MODELS.join(", ")}`);
   fs.mkdirSync(MEDIA, { recursive: true });
   const data = JSON.parse(fs.readFileSync(ANN, "utf8"));
   let made = 0;
@@ -125,7 +141,7 @@ async function main() {
           continue;
         }
         process.stdout.write(`→ ${file} … `);
-        const wav = await ttsAny(key, text);
+        const wav = await ttsAny(text);
         fs.writeFileSync(dest, wav);
         console.log(`ok via ${MODELS[modelIdx]} (${Math.round(wav.length / 1024)} KB)`);
         made++;
