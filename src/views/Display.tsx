@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import type { AppData, BusMessage, EventItem } from "../types";
 import { connect, type NetClient } from "../lib/net";
-import { computeState, formatTime12 } from "../lib/time";
+import { computeState, formatTime12, toMinutes } from "../lib/time";
 import { Background } from "../components/Background";
 import { AnnouncementOverlay } from "../components/AnnouncementOverlay";
 import { unlockAudio, playChime } from "../lib/chime";
@@ -241,14 +241,17 @@ function Schedule({
   events: EventItem[];
   currentId: string | null;
 }) {
-  const currentIdx = events.findIndex((e) => e.id === currentId);
+  const ordered = [...events].sort(
+    (a, b) => toMinutes(a.time) - toMinutes(b.time),
+  );
+  const currentIdx = ordered.findIndex((e) => e.id === currentId);
   return (
     <section className="flex min-h-0 flex-col overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-sm">
       <div className="border-b border-neutral-200 px-8 py-6 text-2xl font-semibold tracking-tight">
         Schedule
       </div>
       <div className="flex min-h-0 flex-1 flex-col px-3 py-1">
-        {events.map((e, i) => {
+        {ordered.map((e, i) => {
           const isLive = e.id === currentId;
           const done = currentIdx !== -1 && i < currentIdx;
           return (

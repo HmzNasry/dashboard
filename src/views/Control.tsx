@@ -686,7 +686,9 @@ function ScheduleColumn({
       </SectionHead>
 
       <div className="space-y-2.5">
-        {events.map((e, i) => {
+        {[...events]
+          .sort((a, b) => toMinutes(a.time) - toMinutes(b.time))
+          .map((e, i) => {
           const isLive = currentId === e.id;
           const isPinned = pinned === e.id;
           return (
