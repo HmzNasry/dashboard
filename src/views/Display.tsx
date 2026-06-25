@@ -22,12 +22,12 @@ export function Display({
   const [manualId, setManualId] = useState<string | null>(null);
   const [armed, setArmed] = useState(false);
   const [videoOn, setVideoOn] = useState(false);
-  const [, tick] = useState(0);
+  const [clock, setClock] = useState(0);
 
   useEffect(() => () => client.close(), [client]);
 
   useEffect(() => {
-    const id = setInterval(() => tick((n) => n + 1), 10_000);
+    const id = setInterval(() => setClock((n) => n + 1), 10_000);
     return () => clearInterval(id);
   }, []);
 
@@ -59,7 +59,7 @@ export function Display({
 
   const state = useMemo(
     () => computeState(data.schedule.events, manualId),
-    [data.schedule.events, manualId],
+    [data.schedule.events, manualId, clock],
   );
 
   // Ring the cabin chime whenever the live segment changes (once audio armed).

@@ -70,14 +70,14 @@ export function Control({
   const [eventEdit, setEventEdit] = useState<EventItem | "new" | null>(null);
   const [annEdit, setAnnEdit] = useState<Announcement | "new" | null>(null);
   const [videoOn, setVideoOn] = useState(false);
-  const [, tick] = useState(0);
+  const [clock, setClock] = useState(0);
 
   useEffect(() => () => client.close(), [client]);
   useEffect(() => {
     ttsHealth().then(setTts);
   }, []);
   useEffect(() => {
-    const id = setInterval(() => tick((n) => n + 1), 5000);
+    const id = setInterval(() => setClock((n) => n + 1), 5000);
     return () => clearInterval(id);
   }, []);
   useEffect(() => client.onState(setNet), [client]);
@@ -93,7 +93,7 @@ export function Control({
 
   const live = useMemo(
     () => computeState(data.schedule.events, pinned),
-    [data.schedule.events, pinned],
+    [data.schedule.events, pinned, clock],
   );
 
   function notify(text: string) {
@@ -205,15 +205,23 @@ export function Control({
       <TopBar connected={net.connected} />
 
       <main className="mx-auto max-w-6xl px-6 py-8">
-        <StatusHero
-          live={live}
-          pinned={!!pinned}
-          onClear={stop}
-          videoOn={videoOn}
-          onToggleVideo={toggleVideo}
-        />
+        <StatusHero live={live} pinned={!!pinned} onClear={stop} />
 
-        <div className="mt-10 grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]">
+        <section className="mt-8 flex items-center justify-between gap-4 rounded-2xl border border-neutral-800 bg-neutral-900/40 px-6 py-5">
+          <div>
+            <h2 className="text-base font-medium text-neutral-100">Slideshow</h2>
+            <p className="mt-0.5 text-sm text-neutral-500">
+              Play the looping video full-screen on the TV.
+            </p>
+          </div>
+          <Switch
+            on={videoOn}
+            onChange={toggleVideo}
+            label={videoOn ? "On" : "Off"}
+          />
+        </section>
+
+        <div className="mt-8 grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]">
           <ScheduleColumn
             events={data.schedule.events}
             currentId={live.current?.id ?? null}
@@ -589,52 +597,46 @@ function StatusHero({
   live,
   pinned,
   onClear,
-  videoOn,
-  onToggleVideo,
 }: {
   live: ReturnType<typeof computeState>;
   pinned: boolean;
   onClear: () => void;
-  videoOn: boolean;
-  onToggleVideo: (on: boolean) => void;
 }) {
   return (
     <section className="overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-900/40">
-      <div className="flex flex-col gap-7 p-8 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <div className="flex items-center gap-2.5 text-sm text-neutral-400">
-            <Pulse />
-            <span>On screen now</span>
-            <span className="text-neutral-600">·</span>
-            <span className="text-neutral-500">
-              {pinned ? "pinned" : "following clock"}
-            </span>
-          </div>
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={live.current?.id ?? "pre"}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.3 }}
-              className="mt-3"
-            >
-              <div className="text-[2rem] font-semibold leading-tight tracking-tight">
-                {live.current ? live.current.title.en : "Pre-show"}
+      <div className="p-8">
+        <div className="flex items-center gap-2.5 text-sm text-neutral-400">
+          <Pulse />
+          <span>On screen now</span>
+          <span className="text-neutral-600">·</span>
+          <span className="text-neutral-500">
+            {pinned ? "pinned" : "following clock"}
+          </span>
+        </div>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={live.current?.id ?? "pre"}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.3 }}
+            className="mt-3"
+          >
+            <div className="text-[2rem] font-semibold leading-tight tracking-tight">
+              {live.current ? live.current.title.en : "Pre-show"}
+            </div>
+            {live.current && (
+              <div className="fa mt-1 text-2xl text-neutral-400">
+                {live.current.title.fa}
               </div>
-              {live.current && (
-                <div className="fa mt-1 text-2xl text-neutral-400">
-                  {live.current.title.fa}
-                </div>
-              )}
-            </motion.div>
-          </AnimatePresence>
-        </div>
+            )}
+          </motion.div>
+        </AnimatePresence>
+      </div>
 
-        <div className="flex shrink-0 items-center gap-5">
-          <Switch on={videoOn} onChange={onToggleVideo} label="Video" />
-          <ClearButton onClear={onClear} />
-        </div>
+      {/* Clear button — full width, between "on screen now" and "up next" */}
+      <div className="border-t border-neutral-800 px-8 py-4">
+        <ClearButton onClear={onClear} />
       </div>
 
       {/* Up next strip */}
@@ -734,7 +736,7 @@ function ScheduleColumn({
               transition={{ delay: i * 0.025 }}
               className={`group flex items-center gap-3 rounded-xl border px-4 py-3.5 transition-colors duration-300 ${
                 isLive
-                  ? "border-neutral-500 bg-neutral-800/60"
+                  ? "border-emerald-500 bg-neutral-800/60"
                   : "border-neutral-800 bg-neutral-900/40 hover:border-neutral-600"
               }`}
             >
@@ -746,11 +748,6 @@ function ScheduleColumn({
                 <span className="w-12 shrink-0 tabular-nums text-sm text-neutral-400">
                   {e.time}
                 </span>
-                <span
-                  className={`h-2 w-2 shrink-0 rounded-full transition-colors ${
-                    isLive ? "bg-white" : "bg-neutral-600"
-                  }`}
-                />
                 <span className="min-w-0 flex-1">
                   <span className="block truncate font-medium tracking-tight">
                     {e.title.en}
@@ -761,9 +758,6 @@ function ScheduleColumn({
                 </span>
               </button>
 
-              {isLive && (
-                <span className="shrink-0 text-sm text-white">Live</span>
-              )}
               <IconButton label="Edit event" onClick={() => onEdit(e)}>
                 <PencilIcon />
               </IconButton>
@@ -1092,9 +1086,9 @@ function ClearButton({ onClear }: { onClear: () => void }) {
   return (
     <button
       onClick={click}
-      className="animated-fill fill-danger shrink-0 rounded-xl border border-red-800/70 px-5 py-2.5 text-sm font-medium text-red-300 transition-colors duration-300 hover:text-white"
+      className="animated-fill fill-danger w-full rounded-xl border border-red-800/70 px-5 py-2.5 text-sm font-medium text-red-300 transition-colors duration-300 hover:text-white"
     >
-      <span className="grid min-h-[22px] min-w-[92px] place-items-center">
+      <span className="grid min-h-[22px] place-items-center">
         <AnimatePresence mode="wait" initial={false}>
           {done ? (
             <motion.span

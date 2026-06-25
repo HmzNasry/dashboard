@@ -31,11 +31,15 @@ export function computeState(
   if (manualId) {
     const idx = sorted.findIndex((e) => e.id === manualId);
     if (idx !== -1) {
-      return {
-        current: sorted[idx],
-        next: sorted[idx + 1] ?? null,
-        progress: 0,
-      };
+      const cur = sorted[idx];
+      const nxt = sorted[idx + 1] ?? null;
+      let prog = 0;
+      if (nxt) {
+        const a = toMinutes(cur.time);
+        const b = toMinutes(nxt.time);
+        prog = b > a ? Math.min(1, Math.max(0, (now - a) / (b - a))) : 0;
+      }
+      return { current: cur, next: nxt, progress: prog };
     }
   }
 
