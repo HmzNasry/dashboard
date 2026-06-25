@@ -82,7 +82,7 @@ export function Display({
 
       <div className="safe relative flex h-full flex-col">
         <TopBar title={data.schedule.date} />
-        <div className="grid flex-1 grid-cols-[1.55fr_1fr] gap-8 overflow-hidden pt-8">
+        <div className="grid flex-1 grid-cols-[1.7fr_1fr] gap-8 overflow-hidden pt-8">
           <NowHero state={state} />
           <Schedule
             events={data.schedule.events}

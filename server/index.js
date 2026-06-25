@@ -320,8 +320,9 @@ wss.on("connection", (ws, req) => {
       } else if (m.action === "remove") {
         delete registry[id];
         if (live) {
-          live.approved = false;
-          send(live.ws, stateFor(live));
+          // Tell the client it's been removed so it stops reconnecting (and
+          // won't reappear as pending until the page/QR is opened again).
+          send(live.ws, { kind: "removed" });
           try {
             live.ws.close();
           } catch {

@@ -55,6 +55,7 @@ export function Control({
     me: null,
     devices: [],
     serverUrls: [],
+    removed: false,
   });
   const [eventEdit, setEventEdit] = useState<EventItem | "new" | null>(null);
   const [annEdit, setAnnEdit] = useState<Announcement | "new" | null>(null);
@@ -168,6 +169,10 @@ export function Control({
     }
   };
 
+  // This device was removed by the admin — gone until the link is opened again.
+  if (net.removed) {
+    return <RemovedScreen />;
+  }
   // A remote (phone) that hasn't been approved yet waits on a gate.
   if (net.me && !net.me.admin && !net.me.approved) {
     return <WaitingScreen connected={net.connected} name={net.me.name} />;
@@ -468,7 +473,7 @@ function DeviceRow({
             </button>
           ) : (
             <button
-              onClick={() => admin.revoke(d.id)}
+              onClick={() => admin.remove(d.id)}
               className="animated-fill fill-danger rounded-lg border border-red-700/70 px-3 py-1.5 text-sm text-red-300 transition-colors duration-300 hover:text-white"
             >
               Revoke
@@ -529,6 +534,23 @@ function WaitingScreen({
       </p>
       <p className="mt-4 text-sm text-neutral-600">
         {connected ? "Connected to the dashboard" : "Connecting…"}
+      </p>
+    </div>
+  );
+}
+
+function RemovedScreen() {
+  return (
+    <div className="flex h-screen flex-col items-center justify-center bg-[#0a0a0a] px-8 text-center text-neutral-100">
+      <span className="grid h-12 w-12 place-items-center rounded-full bg-red-500/15 text-2xl text-red-400">
+        ✕
+      </span>
+      <h1 className="mt-6 text-2xl font-semibold tracking-tight">
+        Device removed
+      </h1>
+      <p className="mt-2 max-w-sm text-neutral-400">
+        This phone’s access was revoked. Open the link again — or rescan the QR
+        code on the laptop — to reconnect.
       </p>
     </div>
   );

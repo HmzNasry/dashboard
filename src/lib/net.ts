@@ -9,6 +9,8 @@ export interface NetState {
   me: DeviceInfo | null;
   devices: DeviceInfo[];
   serverUrls: string[];
+  /** This device was removed by the admin — stop and require a fresh open. */
+  removed: boolean;
 }
 
 export interface NetClient {
@@ -56,7 +58,13 @@ export function connect({
   const id = deviceId();
   const busHandlers = new Set<(m: BusMessage) => void>();
   const stateHandlers = new Set<(s: NetState) => void>();
-  let state: NetState = { connected: false, me: null, devices: [], serverUrls: [] };
+  let state: NetState = {
+    connected: false,
+    me: null,
+    devices: [],
+    serverUrls: [],
+    removed: false,
+  };
   let ws: WebSocket | null = null;
   let closed = false;
   let retry = 0;
@@ -90,8 +98,18 @@ export function connect({
           me: m.me ?? null,
           devices: m.devices ?? [],
           serverUrls: m.serverUrls ?? [],
+          removed: false,
         };
         emitState();
+      } else if (m.kind === "removed") {
+        closed = true; // don't reconnect
+        state = { ...state, connected: false, removed: true };
+        emitState();
+        try {
+          ws?.close();
+        } catch {
+          /* ignore */
+        }
       }
     };
 
