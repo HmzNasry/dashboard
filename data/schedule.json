@@ -48,11 +48,11 @@
     },
     {
       "id": "cake",
-      "time": "21:45",
-      "title": { "en": "Cake Cutting & Family Photos", "fa": "قطع و توزیع کیک و عکس یادگاری" },
+      "time": "22:20",
+      "title": { "en": "Cake Cutting", "fa": "قطع و توزیع کیک" },
       "body": {
-        "en": "The couple cut the cake, followed by keepsake photographs.",
-        "fa": "مراسم قطع و توزیع کیک و گرفتن عکس‌های یادگاری."
+        "en": "The couple cut the cake.",
+        "fa": "مراسم قطع و توزیع کیک."
       }
     },
     {
@@ -74,9 +74,18 @@
       }
     },
     {
+      "id": "return",
+      "time": "21:40",
+      "title": { "en": "Bride & Groom Grand Return", "fa": "بازگشت باشکوه عروس و داماد" },
+      "body": {
+        "en": "The bride and groom return for the evening celebration.",
+        "fa": "عروس و داماد برای ادامه جشن شبانه بازمی‌گردند."
+      }
+    },
+    {
       "id": "photos",
       "time": "22:30",
-      "title": { "en": "Family Photo Session", "fa": "عکس‌های یادگاری" },
+      "title": { "en": "Family Photo Session", "fa": "عکس‌های خانوادگی" },
       "body": {
         "en": "To ensure everyone has an opportunity to take photos with the bride and groom, we kindly invite our guests to come to the stage in the following order.",
         "fa": "جهت نظم بهتر و استفاده مؤثر از وقت، از مهمانان گرامی تقاضا می‌شود به ترتیب ذیل برای گرفتن عکس‌های یادگاری با عروس و داماد تشریف بیاورند."
