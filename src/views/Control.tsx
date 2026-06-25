@@ -31,6 +31,16 @@ const ORDERS: { id: string; label: string; value: Lang[] }[] = [
 const inputCls =
   "w-full rounded-lg border border-neutral-800 bg-[#0a0a0a] px-3.5 py-2.5 text-neutral-100 placeholder:text-neutral-600 outline-none transition focus:border-neutral-500";
 
+// Does a pre-recorded audio file actually exist on the server?
+async function fileExists(url: string): Promise<boolean> {
+  try {
+    const r = await fetch(url, { method: "HEAD" });
+    return r.ok;
+  } catch {
+    return false;
+  }
+}
+
 export function Control({
   data,
   reload,
@@ -106,16 +116,22 @@ export function Control({
     notify(label ? `Broadcasting — ${label}` : "Broadcasting");
   };
 
-  // Library broadcast: generate speech from the announcement text (Piper, server
-  // cached) so it's actually read aloud, then send it and mark it live.
+  // Library broadcast: prefer a pre-recorded clip (e.g. a high-quality MP3 made
+  // in Google AI Studio, dropped into media/) when it exists; otherwise fall
+  // back to generating the speech from text with Piper. Then mark it live.
   const broadcast = async (a: Announcement) => {
     setActiveId(a.id);
     const audio: { en?: string; fa?: string } = {};
     for (const lang of order) {
       const text = a.text[lang];
       if (!text || !text.trim()) continue;
-      const r = await generateTts(text, lang);
-      if (r.ok && r.url) audio[lang] = r.url;
+      const pre = a.audio?.[lang];
+      if (pre && (await fileExists(pre))) {
+        audio[lang] = pre;
+      } else {
+        const r = await generateTts(text, lang);
+        if (r.ok && r.url) audio[lang] = r.url;
+      }
     }
     fire({ text: a.text, audio }, a.label);
   };
