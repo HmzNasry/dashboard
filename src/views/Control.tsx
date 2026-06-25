@@ -114,7 +114,7 @@ export function Control({
       type: "announce",
       payload: { text: a.text, audio: a.audio, chime, order, holdMs: HOLD_MS },
     });
-    notify(label ? `Broadcasting — ${label}` : "Broadcasting");
+    notify(label ? `Broadcasting: ${label}` : "Broadcasting");
   };
 
   // Library broadcast: prefer a pre-recorded clip (e.g. a high-quality MP3 made
@@ -395,7 +395,7 @@ function DevicesPanel({
             </a>
           ) : (
             <p className="mt-3 text-sm text-amber-400">
-              No network address found — connect the laptop to Wi-Fi or start a
+              No network address found. Connect the laptop to Wi-Fi or start a
               hotspot.
             </p>
           )}
@@ -632,8 +632,8 @@ function RemovedScreen() {
         Device removed
       </h1>
       <p className="mt-2 max-w-sm text-neutral-400">
-        This phone’s access was revoked. Open the link again — or rescan the QR
-        code on the laptop — to reconnect.
+        This phone’s access was revoked. Open the link again, or rescan the QR
+        code on the laptop, to reconnect.
       </p>
     </div>
   );
@@ -827,7 +827,7 @@ function ScheduleColumn({
 
                 {/* Linked broadcast — peeks out from under the event card */}
                 {linked && (
-                  <div className="relative z-0 mx-5 -mt-2 flex items-center gap-2 rounded-b-2xl border border-t-0 border-neutral-800 bg-neutral-900/80 px-4 pb-2.5 pt-4">
+                  <div className="relative z-0 mx-5 -mt-2 flex items-center gap-2 rounded-b-2xl border border-t-0 border-emerald-600/60 bg-neutral-900/80 px-4 pb-2.5 pt-4">
                     <svg
                       width="13"
                       height="13"
@@ -984,7 +984,7 @@ function Compose({
         if (!text.trim()) continue;
         const r = await generateTts(text, lang);
         if (!r.ok) {
-          setMsg(`Couldn’t generate ${lang === "en" ? "English" : "Persian"} audio — ${r.error}`);
+          setMsg(`Couldn’t generate ${lang === "en" ? "English" : "Persian"} audio: ${r.error}`);
           return;
         }
         audio[lang] = r.url;
@@ -1005,7 +1005,7 @@ function Compose({
           <span
             className={`h-1.5 w-1.5 rounded-full ${tts.ready ? "bg-emerald-400" : "bg-neutral-600"}`}
           />
-          {tts.ready ? "Offline voice ready" : "No voice — text shows silently"}
+          {tts.ready ? "Offline voice ready" : "No voice, text shows silently"}
         </span>
       </div>
       <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -1446,7 +1446,7 @@ function EventEditor({
             className="w-40 rounded-lg border border-neutral-800 bg-[#0a0a0a] px-3.5 py-2.5 text-neutral-100 outline-none transition focus:border-neutral-500"
           />
         </Field>
-        <Field label="Title — English">
+        <Field label="English title">
           <input
             value={titleEn}
             onChange={(e) => setTitleEn(e.target.value)}
@@ -1454,7 +1454,7 @@ function EventEditor({
             className={inputCls}
           />
         </Field>
-        <Field label="Title — Farsi">
+        <Field label="Farsi title">
           <input
             dir="rtl"
             value={titleFa}
@@ -1463,7 +1463,7 @@ function EventEditor({
             className={`fa ${inputCls}`}
           />
         </Field>
-        <Field label="Body — English">
+        <Field label="English body">
           <textarea
             rows={2}
             value={bodyEn}
@@ -1472,7 +1472,7 @@ function EventEditor({
             className={`resize-none ${inputCls}`}
           />
         </Field>
-        <Field label="Body — Farsi">
+        <Field label="Farsi body">
           <textarea
             rows={2}
             dir="rtl"
@@ -1482,7 +1482,7 @@ function EventEditor({
             className={`fa resize-none ${inputCls}`}
           />
         </Field>
-        <Field label="Linked broadcast (fired when this event goes live)">
+        <Field label="Linked broadcast">
           <select
             value={broadcastId}
             onChange={(e) => setBroadcastId(e.target.value)}
@@ -1547,7 +1547,7 @@ function AnnouncementEditor({
             className={inputCls}
           />
         </Field>
-        <Field label="Message — English">
+        <Field label="English message">
           <textarea
             rows={3}
             value={textEn}
@@ -1555,7 +1555,7 @@ function AnnouncementEditor({
             className={`resize-none ${inputCls}`}
           />
         </Field>
-        <Field label="Message — Farsi">
+        <Field label="Farsi message">
           <textarea
             rows={3}
             dir="rtl"
@@ -1564,7 +1564,7 @@ function AnnouncementEditor({
             className={`fa resize-none ${inputCls}`}
           />
         </Field>
-        <Field label="Link to event (fires when that event goes live)">
+        <Field label="Link to event">
           <select
             value={linkEventId}
             onChange={(e) => setLinkEventId(e.target.value)}
