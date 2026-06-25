@@ -15,8 +15,13 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const MEDIA = path.join(ROOT, "media");
 const ANN = path.join(ROOT, "data", "announcements.json");
 
-const MODEL = process.env.GEMINI_TTS_MODEL || "gemini-2.5-flash-preview-tts";
-const VOICE = process.env.GEMINI_VOICE || "Kore"; // multilingual; handles EN + FA
+// Latest first, then fall back automatically when a model's daily quota is hit.
+const MODELS = [
+  process.env.GEMINI_TTS_MODEL || "gemini-3.1-flash-tts-preview",
+  "gemini-2.5-flash-preview-tts",
+  "gemini-2.5-pro-preview-tts",
+].filter((m, i, a) => a.indexOf(m) === i);
+const VOICE = process.env.GEMINI_VOICE || "Achernar"; // soft female; multilingual
 const FORCE = process.argv.includes("--force");
 const RATE_MS = 4500; // ~13 req/min, under the 15 RPM free-tier limit
 
@@ -48,8 +53,8 @@ function pcmToWav(pcm, sampleRate) {
   return Buffer.concat([h, pcm]);
 }
 
-async function tts(key, text) {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${key}`;
+async function tts(key, text, model) {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
   const res = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -73,6 +78,25 @@ async function tts(key, text) {
 }
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+// Try the current model; on a 429 (quota) advance to the next model and stay
+// there for the rest of the run. Throws when all models are exhausted.
+let modelIdx = 0;
+async function ttsAny(key, text) {
+  while (modelIdx < MODELS.length) {
+    try {
+      return await tts(key, text, MODELS[modelIdx]);
+    } catch (e) {
+      if (/HTTP 429/.test(e.message)) {
+        console.log(`(quota hit on ${MODELS[modelIdx]} → trying next model)`);
+        modelIdx++;
+        continue;
+      }
+      throw e;
+    }
+  }
+  throw new Error("all model daily quotas exhausted — try again after reset");
+}
 
 async function main() {
   const key = apiKey();
@@ -101,9 +125,9 @@ async function main() {
           continue;
         }
         process.stdout.write(`→ ${file} … `);
-        const wav = await tts(key, text);
+        const wav = await ttsAny(key, text);
         fs.writeFileSync(dest, wav);
-        console.log(`ok (${Math.round(wav.length / 1024)} KB)`);
+        console.log(`ok via ${MODELS[modelIdx]} (${Math.round(wav.length / 1024)} KB)`);
         made++;
         save();
         await sleep(RATE_MS);
