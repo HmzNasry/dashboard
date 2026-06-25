@@ -174,7 +174,7 @@ function NowHero({ state }: { state: ReturnType<typeof computeState> }) {
   const smallTitle = "text-2xl font-medium text-neutral-300";
 
   return (
-    <section className="flex min-h-0 flex-col overflow-hidden rounded-3xl border-2 border-white/70 bg-neutral-900/55 text-neutral-100 shadow-[0_8px_28px_rgba(0,0,0,0.22)] backdrop-blur-lg">
+    <section className="flex min-h-0 flex-col overflow-hidden rounded-3xl border-2 border-white/70 bg-neutral-900/72 text-neutral-100 shadow-[0_8px_28px_rgba(0,0,0,0.22)] backdrop-blur-2xl">
       <div className="relative flex min-h-0 flex-1 flex-col">
         <AnimatePresence mode="wait">
           <motion.div
@@ -296,7 +296,7 @@ function Schedule({
   );
   const currentIdx = ordered.findIndex((e) => e.id === currentId);
   return (
-    <section className="flex min-h-0 flex-col overflow-hidden rounded-3xl border-2 border-white/70 bg-neutral-900/55 text-neutral-100 shadow-[0_8px_28px_rgba(0,0,0,0.22)] backdrop-blur-lg">
+    <section className="flex min-h-0 flex-col overflow-hidden rounded-3xl border-2 border-white/70 bg-neutral-900/72 text-neutral-100 shadow-[0_8px_28px_rgba(0,0,0,0.22)] backdrop-blur-2xl">
       <div className="border-b border-white/15 px-8 py-6 font-display text-3xl tracking-tight">
         Schedule
       </div>

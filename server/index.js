@@ -110,9 +110,9 @@ app.get("/api/tts/health", (_req, res) => {
 });
 
 // ---- Gemini TTS (online, high quality) -----------------------------------
+// 3.1 only — the 2.5 models often reply with text instead of audio.
 const GEMINI_MODELS = [
   process.env.GEMINI_TTS_MODEL || "gemini-3.1-flash-tts-preview",
-  "gemini-2.5-flash-preview-tts",
 ].filter((m, i, a) => a.indexOf(m) === i);
 const GEMINI_VOICE = process.env.GEMINI_VOICE || "Achernar"; // soft female
 
@@ -146,45 +146,54 @@ function pcmToWav(pcm, sampleRate) {
   return Buffer.concat([h, pcm]);
 }
 
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
 async function geminiTts(text) {
   const keys = geminiKeys();
   if (!keys.length) throw new Error("no Gemini key");
   let lastErr;
   for (const key of keys) {
     for (const model of GEMINI_MODELS) {
-      try {
-        const r = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              contents: [{ parts: [{ text }] }],
-              generationConfig: {
-                responseModalities: ["AUDIO"],
-                speechConfig: {
-                  voiceConfig: { prebuiltVoiceConfig: { voiceName: GEMINI_VOICE } },
+      // Retry both transient network errors ("fetch failed") AND "no audio"
+      // responses (the TTS model is non-deterministic and sometimes replies
+      // with text) before moving on — keeps us on Gemini rather than dropping
+      // to Piper. HTTP errors (quota/invalid) skip straight to the next key.
+      for (let attempt = 1; attempt <= 4; attempt++) {
+        try {
+          const r = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                contents: [{ parts: [{ text }] }],
+                generationConfig: {
+                  responseModalities: ["AUDIO"],
+                  speechConfig: {
+                    voiceConfig: { prebuiltVoiceConfig: { voiceName: GEMINI_VOICE } },
+                  },
                 },
-              },
-            }),
-          },
-        );
-        if (!r.ok) {
-          lastErr = new Error(`${model} HTTP ${r.status}`);
-          continue;
+              }),
+            },
+          );
+          if (!r.ok) {
+            lastErr = new Error(`${model} HTTP ${r.status}`);
+            break; // quota/invalid — try next key, not the same one
+          }
+          const json = await r.json();
+          const part = json?.candidates?.[0]?.content?.parts?.find((p) => p.inlineData);
+          if (part) {
+            const rate = Number(
+              (part.inlineData.mimeType || "").match(/rate=(\d+)/)?.[1] || 24000,
+            );
+            return pcmToWav(Buffer.from(part.inlineData.data, "base64"), rate);
+          }
+          lastErr = new Error("no audio in response"); // model replied in text — retry
+          await sleep(500 * attempt);
+        } catch (e) {
+          lastErr = e; // network error — back off and retry
+          await sleep(700 * attempt);
         }
-        const json = await r.json();
-        const part = json?.candidates?.[0]?.content?.parts?.find((p) => p.inlineData);
-        if (!part) {
-          lastErr = new Error("no audio in response");
-          continue;
-        }
-        const rate = Number(
-          (part.inlineData.mimeType || "").match(/rate=(\d+)/)?.[1] || 24000,
-        );
-        return pcmToWav(Buffer.from(part.inlineData.data, "base64"), rate);
-      } catch (e) {
-        lastErr = e;
       }
     }
   }
@@ -208,6 +217,7 @@ app.post("/api/tts", async (req, res) => {
     fs.writeFileSync(outPath, wav);
     return res.json({ ok: true, url, engine: "gemini" });
   } catch (geminiErr) {
+    console.error(`[tts] Gemini failed → Piper fallback: ${geminiErr?.message || geminiErr}`);
     // 2) Piper fallback
     const cfg = loadTtsConfig();
     const model = voicePath(cfg.voices?.[lang]);

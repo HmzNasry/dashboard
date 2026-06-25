@@ -24,7 +24,8 @@
       "body": {
         "en": "Please be seated, keep quiet, and give your full attention to the recitation of the Holy Qur’an.",
         "fa": "لطفاً بنشینید، سکوت را رعایت کنید و با تمام توجه به تلاوت قرآن کریم گوش دهید."
-      }
+      },
+      "broadcastId": "quran"
     },
     {
       "id": "couple-entrance",
@@ -36,7 +37,8 @@
       "body": {
         "en": "Please join us in welcoming the newlyweds.",
         "fa": "از مهمانان گرامی تقاضا می‌شود برای استقبال از عروس و داماد آماده باشند"
-      }
+      },
+      "broadcastId": "couple-entrance"
     },
     {
       "id": "dua",
@@ -48,7 +50,8 @@
       "body": {
         "en": "May Allah bless you both, shower His blessings upon you, and unite you in goodness.",
         "fa": "بارك الله لكما وبارك عليكما وجمع بينكما في خير"
-      }
+      },
+      "broadcastId": "dua"
     },
     {
       "id": "family-remarks",
@@ -60,7 +63,8 @@
       "body": {
         "en": "The bride & groom’s family warmly welcomes all distinguished guests and sincerely thanks you for honoring this blessed occasion with your presence. Your prayers and good wishes are deeply appreciated.",
         "fa": "خانوادهٔ عروس و داماد حضور گرم و صمیمانهٔ همه مهمانان گرامی را خیرمقدم گفته و از اینکه در این محفل تشریف آورده‌اید، صمیمانه سپاسگزاری می‌نمایند."
-      }
+      },
+      "broadcastId": "family-remarks"
     },
     {
       "id": "dinner",
@@ -72,7 +76,8 @@
       "body": {
         "en": "Please enjoy your meal.",
         "fa": "نوش جان؛ از صرف غذا لذت ببرید."
-      }
+      },
+      "broadcastId": "dinner"
     },
     {
       "id": "prayer",
@@ -84,7 +89,8 @@
       "body": {
         "en": "Guests are kindly invited to proceed for prayer.",
         "fa": "از مهمانان گرامی دعوت می‌شود برای ادای نماز تشریف ببرند"
-      }
+      },
+      "broadcastId": "prayer"
     },
     {
       "id": "return",
@@ -96,7 +102,8 @@
       "body": {
         "en": "The bride and groom return for the evening celebration.",
         "fa": "عروس و داماد برای ادامه جشن شبانه بازمی‌گردند."
-      }
+      },
+      "broadcastId": "return"
     },
     {
       "id": "cake",
@@ -108,7 +115,8 @@
       "body": {
         "en": "The couple cut the cake.",
         "fa": "مراسم قطع و توزیع کیک."
-      }
+      },
+      "broadcastId": "cake"
     },
     {
       "id": "photos",
@@ -120,7 +128,8 @@
       "body": {
         "en": "To ensure everyone has an opportunity to take photos with the bride and groom, we kindly invite our guests to come to the stage in the following order.",
         "fa": "جهت نظم بهتر و استفاده مؤثر از وقت، از مهمانان گرامی تقاضا می‌شود به ترتیب ذیل برای گرفتن عکس‌های یادگاری با عروس و داماد تشریف بیاورند."
-      }
+      },
+      "broadcastId": "photos-intro"
     },
     {
       "id": "farewell",
@@ -132,7 +141,8 @@
       "body": {
         "en": "Thank you for honoring us with your presence and heartfelt prayers. May Allah bless you and your families with health, happiness and endless blessings.",
         "fa": "از حضور، محبت و دعاهای خیر شما صمیمانه سپاسگزاریم. خداوند متعال به شما و خانواده‌های محترم تان صحت، سعادت و برکت روز افزون عنایت فرماید"
-      }
+      },
+      "broadcastId": "farewell"
     }
   ]
 }

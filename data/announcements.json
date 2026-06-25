@@ -27,6 +27,45 @@
       }
     },
     {
+      "id": "dua",
+      "label": "Du’a for the Couple",
+      "chime": true,
+      "text": {
+        "en": "We now ask everyone to join in a heartfelt prayer for the bride and groom. May Allah grant them a blessed and happy life together.",
+        "fa": "اکنون از مهمانان گرامی تقاضا می‌شود تا در دعای خیر برای عروس و داماد سهیم شوند. خداوند متعال به آن‌ها زندگی مشترک خجسته و پر از خوشی و برکت نصیب فرماید."
+      },
+      "audio": {
+        "en": "/audio/dua-en.wav",
+        "fa": "/audio/dua-fa.wav"
+      }
+    },
+    {
+      "id": "family-remarks",
+      "label": "Remarks from the Family",
+      "chime": true,
+      "text": {
+        "en": "We now invite you to listen to a few words from the families of the bride and groom.",
+        "fa": "اکنون از مهمانان گرامی تقاضا می‌شود تا به سخنان خانواده‌های عروس و داماد توجه فرمایند."
+      },
+      "audio": {
+        "en": "/audio/family-remarks-en.wav",
+        "fa": "/audio/family-remarks-fa.wav"
+      }
+    },
+    {
+      "id": "return",
+      "label": "Bride & Groom Grand Return",
+      "chime": true,
+      "text": {
+        "en": "Please welcome the bride and groom as they return to continue the celebration.",
+        "fa": "از مهمانان گرامی تقاضا می‌شود برای استقبال دوبارهٔ عروس و داماد آماده باشند تا جشن ادامه یابد."
+      },
+      "audio": {
+        "en": "/audio/return-en.wav",
+        "fa": "/audio/return-fa.wav"
+      }
+    },
+    {
       "id": "quran",
       "label": "Qur’an Recitation",
       "chime": true,

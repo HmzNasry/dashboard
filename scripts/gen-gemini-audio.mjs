@@ -15,11 +15,9 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const MEDIA = path.join(ROOT, "media");
 const ANN = path.join(ROOT, "data", "announcements.json");
 
-// Latest first, then fall back automatically when a model's daily quota is hit.
+// 3.1 only — the 2.5 models often reply with text instead of audio.
 const MODELS = [
   process.env.GEMINI_TTS_MODEL || "gemini-3.1-flash-tts-preview",
-  "gemini-2.5-flash-preview-tts",
-  "gemini-2.5-pro-preview-tts",
 ].filter((m, i, a) => a.indexOf(m) === i);
 const VOICE = process.env.GEMINI_VOICE || "Achernar"; // soft female; multilingual
 const FORCE = process.argv.includes("--force");
@@ -96,16 +94,23 @@ let modelIdx = 0;
 async function ttsAny(text) {
   while (keyIdx < KEYS.length) {
     while (modelIdx < MODELS.length) {
-      try {
-        return await tts(KEYS[keyIdx], text, MODELS[modelIdx]);
-      } catch (e) {
-        if (/HTTP 429/.test(e.message)) {
-          console.log(`(quota: key #${keyIdx + 1} / ${MODELS[modelIdx]} → next)`);
-          modelIdx++;
-          continue;
+      // Retry "no audio" (model replied in text) and network blips on the same
+      // model; only a 429 advances to the next model/key.
+      let advanced = false;
+      for (let attempt = 1; attempt <= 4 && !advanced; attempt++) {
+        try {
+          return await tts(KEYS[keyIdx], text, MODELS[modelIdx]);
+        } catch (e) {
+          if (/HTTP 429/.test(e.message)) {
+            console.log(`(quota: key #${keyIdx + 1} / ${MODELS[modelIdx]} → next)`);
+            advanced = true;
+          } else {
+            console.log(`  retry ${attempt}/4 (${e.message})`);
+            await sleep(800 * attempt);
+          }
         }
-        throw e;
       }
+      modelIdx++;
     }
     keyIdx++;
     modelIdx = 0;
